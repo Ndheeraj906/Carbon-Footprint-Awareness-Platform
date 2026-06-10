@@ -1407,7 +1407,11 @@ function autoFillDemo() {
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 // Expose functions to window for HTML inline handlers
 window.navigate = navigate;
