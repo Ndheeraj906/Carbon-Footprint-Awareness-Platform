@@ -1,3 +1,4 @@
+import { calculateTransportCO2, calculateEnergyCO2, calculateFoodCO2, calculateWasteCO2, EF } from './src/calculator.js';
 /* =====================================================
    EcoTrack — app.js
    Core Application Logic
@@ -6,29 +7,6 @@
 'use strict';
 
 // ─── Emission Factors (kg CO₂e per unit) ─────────────────────────────────────
-const EF = {
-  // Transport (kg CO₂e per km)
-  car: { petrol: 0.21, diesel: 0.17, hybrid: 0.12, electric: 0.05 },
-  transit: 0.089, // per km (bus avg)
-  shortFlight: 255, // per flight (economy, radiative forcing included)
-  longFlight: 1100, // per flight
-  // Energy (per unit/month)
-  electricGrid: 0.233, // per kWh (world avg grid)
-  electricRenewable: 0.02,
-  electricPartial: 0.13,
-  naturalGas: 2.04, // per m³
-  heatingOil: 2.68, // per liter
-  // Food (kg CO₂e per kg food)
-  beef: 27,
-  poultry: 6.9,
-  fish: 6.1,
-  dairy: 3.2,
-  veggies: 0.9,
-  // Waste (per kg)
-  wasteGeneral: 0.57,
-  clothing: 12, // per item
-  onlinePackage: 0.5, // per package
-};
 
 // ─── Daily Eco Tips ───────────────────────────────────────────────────────────
 const ECO_TIPS = [
@@ -577,11 +555,7 @@ function recalc() {
   const transitKm = parseFloat(document.getElementById('transitKm').value) || 0;
   const cycleKm = parseFloat(document.getElementById('cycleKm').value) || 0;
 
-  const transportCO2 =
-    carKm * EF.car[carType] +
-    shortFlights * EF.shortFlight +
-    longFlights * EF.longFlight +
-    transitKm * EF.transit;
+  const transportCO2 = calculateTransportCO2(carKm, carType, shortFlights, longFlights, transitKm);
 
   // ── Energy
   const electricKwh = parseFloat(document.getElementById('electricKwh').value) || 0;
@@ -590,14 +564,7 @@ function recalc() {
   const heatingOil = parseFloat(document.getElementById('heatingOil').value) || 0;
   const homeSize = parseFloat(document.getElementById('homeSize').value) || 1;
 
-  const electricEF =
-    energySource === 'grid'
-      ? EF.electricGrid
-      : energySource === 'partial'
-        ? EF.electricPartial
-        : EF.electricRenewable;
-  const energyCO2 =
-    (electricKwh * electricEF + gasM3 * EF.naturalGas + heatingOil * EF.heatingOil) * homeSize;
+  const energyCO2 = calculateEnergyCO2(electricKwh, energySource, gasM3, heatingOil, homeSize);
 
   // ── Food
   const beefKg = parseFloat(document.getElementById('beefKg').value) || 0;
@@ -607,13 +574,7 @@ function recalc() {
   const veggieKg = parseFloat(document.getElementById('veggieKg').value) || 0;
   const dietStyle = parseFloat(document.getElementById('dietStyle').value) || 1;
 
-  const foodCO2 =
-    (beefKg * EF.beef +
-      poultryKg * EF.poultry +
-      fishKg * EF.fish +
-      dairyKg * EF.dairy +
-      veggieKg * EF.veggies) *
-    dietStyle;
+  const foodCO2 = calculateFoodCO2(beefKg, poultryKg, fishKg, dairyKg, veggieKg, dietStyle);
 
   // ── Waste
   const wasteKg = parseFloat(document.getElementById('wasteKg').value) || 0;
@@ -624,10 +585,7 @@ function recalc() {
   const clothingItems = parseFloat(document.getElementById('clothingItems').value) || 0;
   const onlineShopping = parseFloat(document.getElementById('onlineShopping').value) || 0;
 
-  const wasteCO2 =
-    wasteKg * 4.33 * EF.wasteGeneral * (1 - recyclingRate / 100) +
-    clothingItems * EF.clothing +
-    onlineShopping * EF.onlinePackage;
+  const wasteCO2 = calculateWasteCO2(wasteKg, recyclingRate, clothingItems, onlineShopping);
 
   calcValues = { transport: transportCO2, energy: energyCO2, food: foodCO2, waste: wasteCO2 };
   const total = transportCO2 + energyCO2 + foodCO2 + wasteCO2;
@@ -1450,3 +1408,25 @@ function autoFillDemo() {
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);
+
+// Expose functions to window for HTML inline handlers
+window.navigate = navigate;
+window.switchAuthTab = switchAuthTab;
+window.toggleMobileNav = toggleMobileNav;
+window.nextTip = nextTip;
+window.switchCategory = switchCategory;
+window.recalc = recalc;
+window.logActivity = logActivity;
+window.setAnalyticsPeriod = setAnalyticsPeriod;
+window.updateGoalSlider = updateGoalSlider;
+window.saveGoal = saveGoal;
+window.completeChallenge = completeChallenge;
+window.closeOnboarding = closeOnboarding;
+window.togglePwd = togglePwd;
+window.checkPasswordStrength = checkPasswordStrength;
+window.handleLogin = handleLogin;
+window.handleSignup = handleSignup;
+window.handleSocialLogin = handleSocialLogin;
+window.handleForgot = handleForgot;
+window.handleLogout = handleLogout;
+window.autoFillDemo = autoFillDemo;

@@ -67,10 +67,10 @@
         <div class="auth-card glass-card">
           <!-- Tabs -->
           <div class="auth-tabs">
-            <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">
+            <button aria-label="Login Tab" class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">
               Sign In
             </button>
-            <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">
+            <button aria-label="Signup Tab" class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">
               Sign Up
             </button>
           </div>
@@ -91,7 +91,7 @@
               </div>
             </div>
             <div class="auth-field">
-              <label for="loginEmail"><i data-lucide="mail"></i> Email</label>
+              <label for="loginEmail"><i aria-hidden="true" data-lucide="mail"></i> Email</label>
               <input
                 type="email"
                 id="loginEmail"
@@ -101,7 +101,7 @@
               />
             </div>
             <div class="auth-field">
-              <label for="loginPassword"><i data-lucide="lock"></i> Password</label>
+              <label for="loginPassword"><i aria-hidden="true" data-lucide="lock"></i> Password</label>
               <div class="password-wrap">
                 <input
                   type="password"
@@ -116,7 +116,7 @@
                   onclick="togglePwd('loginPassword', this)"
                   aria-label="Toggle password visibility"
                 >
-                  <i data-lucide="eye"></i>
+                  <i aria-hidden="true" data-lucide="eye"></i>
                 </button>
               </div>
             </div>
@@ -132,7 +132,7 @@
             </div>
             <div class="auth-error" id="loginError"></div>
             <button type="submit" class="btn-primary btn-full auth-submit" id="loginBtn">
-              <i data-lucide="log-in"></i> Sign In
+              <i aria-hidden="true" data-lucide="log-in"></i> Sign In
             </button>
             <div class="auth-divider"><span>or continue with</span></div>
             <div class="auth-socials">
@@ -187,7 +187,7 @@
             </div>
             <div class="auth-fields-row">
               <div class="auth-field">
-                <label for="signupFirst"><i data-lucide="user"></i> First Name</label>
+                <label for="signupFirst"><i aria-hidden="true" data-lucide="user"></i> First Name</label>
                 <input type="text" id="signupFirst" placeholder="Alex" required />
               </div>
               <div class="auth-field">
@@ -196,11 +196,11 @@
               </div>
             </div>
             <div class="auth-field">
-              <label for="signupEmail"><i data-lucide="mail"></i> Email</label>
+              <label for="signupEmail"><i aria-hidden="true" data-lucide="mail"></i> Email</label>
               <input type="email" id="signupEmail" placeholder="you@example.com" required />
             </div>
             <div class="auth-field">
-              <label for="signupPassword"><i data-lucide="lock"></i> Password</label>
+              <label for="signupPassword"><i aria-hidden="true" data-lucide="lock"></i> Password</label>
               <div class="password-wrap">
                 <input
                   type="password"
@@ -216,7 +216,7 @@
                   onclick="togglePwd('signupPassword', this)"
                   aria-label="Toggle password visibility"
                 >
-                  <i data-lucide="eye"></i>
+                  <i aria-hidden="true" data-lucide="eye"></i>
                 </button>
               </div>
               <div class="password-strength" id="pwdStrength">
@@ -225,7 +225,7 @@
               </div>
             </div>
             <div class="auth-field">
-              <label><i data-lucide="globe"></i> Country</label>
+              <label><i aria-hidden="true" data-lucide="globe"></i> Country</label>
               <select id="signupCountry">
                 <option value="">Select your country</option>
                 <option value="us">🇺🇸 United States</option>
@@ -247,7 +247,7 @@
             </div>
             <div class="auth-error" id="signupError"></div>
             <button type="submit" class="btn-primary btn-full auth-submit" id="signupBtn">
-              <i data-lucide="user-plus"></i> Create Account
+              <i aria-hidden="true" data-lucide="user-plus"></i> Create Account
             </button>
           </form>
         </div>
@@ -258,7 +258,7 @@
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon">
-          <i data-lucide="leaf" class="logo-leaf"></i>
+          <i aria-hidden="true" data-lucide="leaf" class="logo-leaf"></i>
         </div>
         <div class="logo-text">
           <span class="logo-title">EcoTrack</span>
@@ -274,7 +274,7 @@
             id="nav-dashboard"
             onclick="navigate('dashboard')"
           >
-            <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+            <i aria-hidden="true" data-lucide="layout-dashboard"></i><span>Dashboard</span>
           </a>
         </li>
         <li>
@@ -284,22 +284,22 @@
             id="nav-calculator"
             onclick="navigate('calculator')"
           >
-            <i data-lucide="calculator"></i><span>Log Activity</span>
+            <i aria-hidden="true" data-lucide="calculator"></i><span>Log Activity</span>
           </a>
         </li>
         <li>
           <a href="#analytics" class="nav-link" id="nav-analytics" onclick="navigate('analytics')">
-            <i data-lucide="bar-chart-2"></i><span>Analytics</span>
+            <i aria-hidden="true" data-lucide="bar-chart-2"></i><span>Analytics</span>
           </a>
         </li>
         <li>
           <a href="#goals" class="nav-link" id="nav-goals" onclick="navigate('goals')">
-            <i data-lucide="target"></i><span>Goals</span>
+            <i aria-hidden="true" data-lucide="target"></i><span>Goals</span>
           </a>
         </li>
         <li>
           <a href="#learn" class="nav-link" id="nav-learn" onclick="navigate('learn')">
-            <i data-lucide="book-open"></i><span>Learn</span>
+            <i aria-hidden="true" data-lucide="book-open"></i><span>Learn</span>
           </a>
         </li>
       </ul>
@@ -314,7 +314,7 @@
           </div>
         </div>
         <div class="eco-level-badge" id="ecoLevelBadge">
-          <i data-lucide="sprout"></i>
+          <i aria-hidden="true" data-lucide="sprout"></i>
           <span id="ecoLevelText">Seedling</span>
         </div>
         <div class="profile-score">
@@ -322,19 +322,19 @@
           <span class="score-value" id="sidebarScore">0</span>
         </div>
         <button class="btn-logout" onclick="handleLogout()">
-          <i data-lucide="log-out"></i> Sign Out
+          <i aria-hidden="true" data-lucide="log-out"></i> Sign Out
         </button>
       </div>
     </nav>
 
     <!-- Mobile Top Bar -->
     <header class="mobile-header">
-      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()">
-        <i data-lucide="menu"></i>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle Navigation">
+        <i aria-hidden="true" data-lucide="menu"></i>
       </button>
       <span class="mobile-title">EcoTrack</span>
       <div class="mobile-score">
-        <i data-lucide="zap"></i>
+        <i aria-hidden="true" data-lucide="zap"></i>
         <span id="mobileScore">0</span>
       </div>
     </header>
@@ -349,7 +349,7 @@
             <p class="page-subtitle">Track your environmental impact in real-time</p>
           </div>
           <div class="streak-badge" id="streakBadge">
-            <i data-lucide="flame"></i>
+            <i aria-hidden="true" data-lucide="flame"></i>
             <span id="streakCount">0</span> day streak
           </div>
         </div>
@@ -357,7 +357,7 @@
         <!-- Stats Row -->
         <div class="stats-grid">
           <div class="stat-card glow-green">
-            <div class="stat-icon green"><i data-lucide="wind"></i></div>
+            <div class="stat-icon green"><i aria-hidden="true" data-lucide="wind"></i></div>
             <div class="stat-info">
               <span class="stat-label">Today's CO₂</span>
               <span class="stat-value" id="todayCO2">0.0</span>
@@ -366,7 +366,7 @@
             <div class="stat-trend" id="todayTrend">—</div>
           </div>
           <div class="stat-card glow-blue">
-            <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
+            <div class="stat-icon blue"><i aria-hidden="true" data-lucide="calendar"></i></div>
             <div class="stat-info">
               <span class="stat-label">This Month</span>
               <span class="stat-value" id="monthCO2">0.0</span>
@@ -375,7 +375,7 @@
             <div class="stat-trend" id="monthTrend">—</div>
           </div>
           <div class="stat-card glow-purple">
-            <div class="stat-icon purple"><i data-lucide="trending-down"></i></div>
+            <div class="stat-icon purple"><i aria-hidden="true" data-lucide="trending-down"></i></div>
             <div class="stat-info">
               <span class="stat-label">Yearly Projection</span>
               <span class="stat-value" id="yearCO2">0.0</span>
@@ -384,7 +384,7 @@
             <div class="stat-trend" id="yearVsAvg">vs avg</div>
           </div>
           <div class="stat-card glow-orange">
-            <div class="stat-icon orange"><i data-lucide="award"></i></div>
+            <div class="stat-icon orange"><i aria-hidden="true" data-lucide="award"></i></div>
             <div class="stat-info">
               <span class="stat-label">Eco Score</span>
               <span class="stat-value" id="ecoScoreStat">0</span>
@@ -412,9 +412,9 @@
 
           <div class="glass-card tip-card">
             <div class="card-header">
-              <h3><i data-lucide="lightbulb"></i> Daily Eco Tip</h3>
+              <h3><i aria-hidden="true" data-lucide="lightbulb"></i> Daily Eco Tip</h3>
               <button class="btn-icon" onclick="nextTip()" title="Next tip">
-                <i data-lucide="refresh-cw"></i>
+                <i aria-hidden="true" data-lucide="refresh-cw"></i>
               </button>
             </div>
             <div class="tip-content" id="tipContent">
@@ -429,7 +429,7 @@
         <!-- Global Comparison -->
         <div class="glass-card comparison-card">
           <div class="card-header">
-            <h3><i data-lucide="globe-2"></i> Global Comparison</h3>
+            <h3><i aria-hidden="true" data-lucide="globe-2"></i> Global Comparison</h3>
             <span class="badge-info">Annual per capita</span>
           </div>
           <div class="comparison-bars">
@@ -463,12 +463,12 @@
         <!-- Recent Activity -->
         <div class="glass-card">
           <div class="card-header">
-            <h3><i data-lucide="activity"></i> Recent Activity</h3>
-            <button class="btn-text" onclick="navigate('calculator')">+ Add Entry</button>
+            <h3><i aria-hidden="true" data-lucide="activity"></i> Recent Activity</h3>
+            <button aria-label="Navigate" class="btn-text" onclick="navigate('calculator')">+ Add Entry</button>
           </div>
           <div class="activity-list" id="recentActivity">
             <div class="empty-state">
-              <i data-lucide="leaf"></i>
+              <i aria-hidden="true" data-lucide="leaf"></i>
               <p>No activity logged yet. Start tracking!</p>
               <button class="btn-primary" onclick="navigate('calculator')">
                 Log First Activity
@@ -488,40 +488,40 @@
             </p>
           </div>
           <div class="calc-preview glass-card mini">
-            <i data-lucide="zap"></i>
+            <i aria-hidden="true" data-lucide="zap"></i>
             <span>Live: <strong id="liveCalcCO2">0.0</strong> kg CO₂e</span>
           </div>
         </div>
 
         <!-- Category Tabs -->
         <div class="category-tabs">
-          <button class="cat-tab active" id="tab-transport" onclick="switchCategory('transport')">
-            <i data-lucide="car"></i><span>Transport</span>
+          <button aria-label="Transport Tab" class="cat-tab active" id="tab-transport" onclick="switchCategory('transport')">
+            <i aria-hidden="true" data-lucide="car"></i><span>Transport</span>
           </button>
-          <button class="cat-tab" id="tab-energy" onclick="switchCategory('energy')">
-            <i data-lucide="zap"></i><span>Energy</span>
+          <button aria-label="Energy Tab" class="cat-tab" id="tab-energy" onclick="switchCategory('energy')">
+            <i aria-hidden="true" data-lucide="zap"></i><span>Energy</span>
           </button>
-          <button class="cat-tab" id="tab-food" onclick="switchCategory('food')">
-            <i data-lucide="utensils"></i><span>Food</span>
+          <button aria-label="Food Tab" class="cat-tab" id="tab-food" onclick="switchCategory('food')">
+            <i aria-hidden="true" data-lucide="utensils"></i><span>Food</span>
           </button>
-          <button class="cat-tab" id="tab-waste" onclick="switchCategory('waste')">
-            <i data-lucide="trash-2"></i><span>Waste</span>
+          <button aria-label="Waste Tab" class="cat-tab" id="tab-waste" onclick="switchCategory('waste')">
+            <i aria-hidden="true" data-lucide="trash-2"></i><span>Waste</span>
           </button>
         </div>
 
         <!-- Transport Panel -->
         <div class="calc-panel" id="panel-transport">
           <div class="glass-card">
-            <h3 class="panel-title"><i data-lucide="car"></i> Transportation</h3>
+            <h3 class="panel-title"><i aria-hidden="true" data-lucide="car"></i> Transportation</h3>
             <div class="input-grid">
               <div class="input-group">
-                <label>🚗 Car Travel Distance</label>
+                <label for="carKm">🚗 Car Travel Distance</label>
                 <div class="input-row">
                   <input type="number" id="carKm" placeholder="0" min="0" oninput="recalc()" />
                   <span class="input-unit">km</span>
                 </div>
                 <div class="input-sub">
-                  <label>Fuel Type</label>
+                  <label for="carType">Fuel Type</label>
                   <select id="carType" onchange="recalc()">
                     <option value="petrol">Petrol/Gasoline</option>
                     <option value="diesel">Diesel</option>
@@ -531,7 +531,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>✈️ Short-haul Flights</label>
+                <label for="shortFlights">✈️ Short-haul Flights</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -545,7 +545,7 @@
                 <small class="hint">Under 3 hours each</small>
               </div>
               <div class="input-group">
-                <label>🛫 Long-haul Flights</label>
+                <label for="longFlights">🛫 Long-haul Flights</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -559,14 +559,14 @@
                 <small class="hint">Over 6 hours each</small>
               </div>
               <div class="input-group">
-                <label>🚌 Public Transit</label>
+                <label for="transitKm">🚌 Public Transit</label>
                 <div class="input-row">
                   <input type="number" id="transitKm" placeholder="0" min="0" oninput="recalc()" />
                   <span class="input-unit">km/month</span>
                 </div>
               </div>
               <div class="input-group">
-                <label>🚲 Cycling / Walking</label>
+                <label for="cycleKm">🚲 Cycling / Walking</label>
                 <div class="input-row">
                   <input type="number" id="cycleKm" placeholder="0" min="0" oninput="recalc()" />
                   <span class="input-unit">km/month</span>
@@ -586,10 +586,10 @@
         <!-- Energy Panel -->
         <div class="calc-panel hidden" id="panel-energy">
           <div class="glass-card">
-            <h3 class="panel-title"><i data-lucide="zap"></i> Home Energy</h3>
+            <h3 class="panel-title"><i aria-hidden="true" data-lucide="zap"></i> Home Energy</h3>
             <div class="input-grid">
               <div class="input-group">
-                <label>⚡ Electricity Usage</label>
+                <label for="electricKwh">⚡ Electricity Usage</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -601,7 +601,7 @@
                   <span class="input-unit">kWh/month</span>
                 </div>
                 <div class="input-sub">
-                  <label>Energy Source</label>
+                  <label for="energySource">Energy Source</label>
                   <select id="energySource" onchange="recalc()">
                     <option value="grid">Standard Grid</option>
                     <option value="renewable">Renewable (Solar/Wind)</option>
@@ -610,21 +610,21 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>🔥 Natural Gas</label>
+                <label for="gasM3">🔥 Natural Gas</label>
                 <div class="input-row">
                   <input type="number" id="gasM3" placeholder="0" min="0" oninput="recalc()" />
                   <span class="input-unit">m³/month</span>
                 </div>
               </div>
               <div class="input-group">
-                <label>🛢️ Heating Oil</label>
+                <label for="heatingOil">🛢️ Heating Oil</label>
                 <div class="input-row">
                   <input type="number" id="heatingOil" placeholder="0" min="0" oninput="recalc()" />
                   <span class="input-unit">liters/month</span>
                 </div>
               </div>
               <div class="input-group">
-                <label>🏠 Home Size</label>
+                <label for="homeSize">🏠 Home Size</label>
                 <div class="input-row">
                   <select id="homeSize" onchange="recalc()">
                     <option value="1">Small apartment (&lt;50m²)</option>
@@ -647,7 +647,7 @@
         <!-- Food Panel -->
         <div class="calc-panel hidden" id="panel-food">
           <div class="glass-card">
-            <h3 class="panel-title"><i data-lucide="utensils"></i> Food & Diet</h3>
+            <h3 class="panel-title"><i aria-hidden="true" data-lucide="utensils"></i> Food & Diet</h3>
             <div class="input-grid">
               <div class="input-group">
                 <label>🥩 Beef / Lamb</label>
@@ -744,17 +744,17 @@
         <!-- Waste Panel -->
         <div class="calc-panel hidden" id="panel-waste">
           <div class="glass-card">
-            <h3 class="panel-title"><i data-lucide="trash-2"></i> Waste & Consumption</h3>
+            <h3 class="panel-title"><i aria-hidden="true" data-lucide="trash-2"></i> Waste & Consumption</h3>
             <div class="input-grid">
               <div class="input-group">
-                <label>🗑️ General Waste</label>
+                <label for="wasteKg">🗑️ General Waste</label>
                 <div class="input-row">
                   <input type="number" id="wasteKg" placeholder="0" min="0" oninput="recalc()" />
                   <span class="input-unit">kg/week</span>
                 </div>
               </div>
               <div class="input-group">
-                <label>♻️ Recycling Rate</label>
+                <label for="recyclingRate">♻️ Recycling Rate</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -781,7 +781,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>📦 Online Shopping</label>
+                <label for="onlineShopping">📦 Online Shopping</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -807,22 +807,22 @@
         <div class="calc-summary glass-card">
           <div class="summary-breakdown" id="calcBreakdown">
             <div class="summary-item">
-              <i data-lucide="car" class="ico-transport"></i>
+              <i aria-hidden="true" data-lucide="car" class="ico-transport"></i>
               <span>Transport</span>
               <strong id="sum-transport">0.0</strong>
             </div>
             <div class="summary-item">
-              <i data-lucide="zap" class="ico-energy"></i>
+              <i aria-hidden="true" data-lucide="zap" class="ico-energy"></i>
               <span>Energy</span>
               <strong id="sum-energy">0.0</strong>
             </div>
             <div class="summary-item">
-              <i data-lucide="utensils" class="ico-food"></i>
+              <i aria-hidden="true" data-lucide="utensils" class="ico-food"></i>
               <span>Food</span>
               <strong id="sum-food">0.0</strong>
             </div>
             <div class="summary-item">
-              <i data-lucide="trash-2" class="ico-waste"></i>
+              <i aria-hidden="true" data-lucide="trash-2" class="ico-waste"></i>
               <span>Waste</span>
               <strong id="sum-waste">0.0</strong>
             </div>
@@ -835,7 +835,7 @@
             </div>
           </div>
           <button class="btn-primary btn-log" id="logBtn" onclick="logActivity()">
-            <i data-lucide="save"></i>
+            <i aria-hidden="true" data-lucide="save"></i>
             Save This Month's Data
           </button>
         </div>
@@ -862,7 +862,7 @@
         <div class="analytics-grid">
           <div class="glass-card full-width">
             <div class="card-header">
-              <h3><i data-lucide="trending-down"></i> Emission Trend</h3>
+              <h3><i aria-hidden="true" data-lucide="trending-down"></i> Emission Trend</h3>
               <div class="trend-indicator" id="trendIndicator">—</div>
             </div>
             <div class="chart-wrapper-full">
@@ -872,7 +872,7 @@
 
           <div class="glass-card">
             <div class="card-header">
-              <h3><i data-lucide="bar-chart-2"></i> Category Comparison</h3>
+              <h3><i aria-hidden="true" data-lucide="bar-chart-2"></i> Category Comparison</h3>
             </div>
             <div class="chart-wrapper-half">
               <canvas id="categoryBarChart"></canvas>
@@ -881,7 +881,7 @@
 
           <div class="glass-card">
             <div class="card-header">
-              <h3><i data-lucide="pie-chart"></i> Footprint Breakdown</h3>
+              <h3><i aria-hidden="true" data-lucide="pie-chart"></i> Footprint Breakdown</h3>
             </div>
             <div class="chart-wrapper-half">
               <canvas id="breakdownChart"></canvas>
@@ -891,28 +891,28 @@
           <!-- Stats Cards -->
           <div class="mini-stats-grid full-width">
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i data-lucide="arrow-down-circle"></i></div>
+              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="arrow-down-circle"></i></div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Best Month</span>
                 <span class="mini-stat-val" id="bestMonth">—</span>
               </div>
             </div>
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i data-lucide="arrow-up-circle"></i></div>
+              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="arrow-up-circle"></i></div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Biggest Category</span>
                 <span class="mini-stat-val" id="biggestCat">—</span>
               </div>
             </div>
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i data-lucide="minus-circle"></i></div>
+              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="minus-circle"></i></div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Total Saved vs Avg</span>
                 <span class="mini-stat-val" id="totalSaved">—</span>
               </div>
             </div>
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i data-lucide="calendar-check"></i></div>
+              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="calendar-check"></i></div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Logs Recorded</span>
                 <span class="mini-stat-val" id="logsCount">0</span>
@@ -933,7 +933,7 @@
 
         <!-- Set Goal -->
         <div class="glass-card goal-setter">
-          <h3><i data-lucide="target"></i> Set Your Monthly Target</h3>
+          <h3><i aria-hidden="true" data-lucide="target"></i> Set Your Monthly Target</h3>
           <div class="goal-input-row">
             <div class="goal-slider-wrap">
               <input
@@ -969,7 +969,7 @@
         <!-- Challenges -->
         <div class="glass-card">
           <div class="card-header">
-            <h3><i data-lucide="zap"></i> Active Eco-Challenges</h3>
+            <h3><i aria-hidden="true" data-lucide="zap"></i> Active Eco-Challenges</h3>
             <span class="badge-info">Updated weekly</span>
           </div>
           <div class="challenges-grid" id="challengesGrid"></div>
@@ -978,7 +978,7 @@
         <!-- Achievements -->
         <div class="glass-card">
           <div class="card-header">
-            <h3><i data-lucide="award"></i> Achievements</h3>
+            <h3><i aria-hidden="true" data-lucide="award"></i> Achievements</h3>
             <span class="badge-info" id="achievementCount">0 / 8 unlocked</span>
           </div>
           <div class="achievements-grid" id="achievementsGrid"></div>
@@ -987,7 +987,7 @@
         <!-- Levels -->
         <div class="glass-card levels-card">
           <div class="card-header">
-            <h3><i data-lucide="star"></i> Eco Levels</h3>
+            <h3><i aria-hidden="true" data-lucide="star"></i> Eco Levels</h3>
           </div>
           <div class="levels-list" id="levelsList"></div>
         </div>
@@ -1013,7 +1013,7 @@
         <!-- Quick Wins Section -->
         <div class="glass-card quick-wins">
           <div class="card-header">
-            <h3><i data-lucide="check-circle"></i> Quick Wins — Reduce Today</h3>
+            <h3><i aria-hidden="true" data-lucide="check-circle"></i> Quick Wins — Reduce Today</h3>
           </div>
           <div class="quick-wins-list" id="quickWinsList"></div>
         </div>
@@ -1033,17 +1033,17 @@
           activities, set goals, and earn eco-achievements.
         </p>
         <div class="modal-features">
-          <div class="modal-feature"><i data-lucide="bar-chart-2"></i> Track emissions</div>
-          <div class="modal-feature"><i data-lucide="target"></i> Set goals</div>
-          <div class="modal-feature"><i data-lucide="award"></i> Earn badges</div>
-          <div class="modal-feature"><i data-lucide="book-open"></i> Learn & reduce</div>
+          <div class="modal-feature"><i aria-hidden="true" data-lucide="bar-chart-2"></i> Track emissions</div>
+          <div class="modal-feature"><i aria-hidden="true" data-lucide="target"></i> Set goals</div>
+          <div class="modal-feature"><i aria-hidden="true" data-lucide="award"></i> Earn badges</div>
+          <div class="modal-feature"><i aria-hidden="true" data-lucide="book-open"></i> Learn & reduce</div>
         </div>
         <button class="btn-primary btn-full" onclick="closeOnboarding()">
-          <i data-lucide="arrow-right"></i> Let's Get Started
+          <i aria-hidden="true" data-lucide="arrow-right"></i> Let's Get Started
         </button>
       </div>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

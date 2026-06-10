@@ -1,8 +1,8 @@
-module.exports = [
+export default [
   {
     languageOptions: {
       ecmaVersion: 12,
-      sourceType: 'commonjs',
+      sourceType: 'module',
       globals: {
         browser: true,
         crypto: 'readonly',
