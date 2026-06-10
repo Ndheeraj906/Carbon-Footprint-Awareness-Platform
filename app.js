@@ -1,10 +1,16 @@
-import { calculateTransportCO2, calculateEnergyCO2, calculateFoodCO2, calculateWasteCO2, EF } from './src/calculator.js';
+import {
+  calculateTransportCO2,
+  calculateEnergyCO2,
+  calculateFoodCO2,
+  calculateWasteCO2,
+  EF,
+} from './src/calculator.js';
 /* =====================================================
    EcoTrack — app.js
    Core Application Logic
    ===================================================== */
 
-'use strict';
+('use strict');
 
 // ─── Emission Factors (kg CO₂e per unit) ─────────────────────────────────────
 

@@ -9,10 +9,17 @@
       content="Track, understand, and reduce your personal carbon footprint with personalized insights, interactive analytics, and eco-challenges."
     />
     <meta
+      name="keywords"
+      content="carbon footprint, CO2 tracker, climate change, sustainability, eco, green living"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net https://unpkg.com; img-src 'self' data: https:;"
+      content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com;"
     />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -24,6 +31,9 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Skip to main content for keyboard/screen reader users -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
     <!-- Animated background particles -->
     <div class="bg-particles" id="bgParticles"></div>
 
@@ -67,10 +77,20 @@
         <div class="auth-card glass-card">
           <!-- Tabs -->
           <div class="auth-tabs">
-            <button aria-label="Login Tab" class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">
+            <button
+              aria-label="Login Tab"
+              class="auth-tab active"
+              id="tabLogin"
+              onclick="switchAuthTab('login')"
+            >
               Sign In
             </button>
-            <button aria-label="Signup Tab" class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">
+            <button
+              aria-label="Signup Tab"
+              class="auth-tab"
+              id="tabSignup"
+              onclick="switchAuthTab('signup')"
+            >
               Sign Up
             </button>
           </div>
@@ -101,7 +121,9 @@
               />
             </div>
             <div class="auth-field">
-              <label for="loginPassword"><i aria-hidden="true" data-lucide="lock"></i> Password</label>
+              <label for="loginPassword"
+                ><i aria-hidden="true" data-lucide="lock"></i> Password</label
+              >
               <div class="password-wrap">
                 <input
                   type="password"
@@ -187,7 +209,9 @@
             </div>
             <div class="auth-fields-row">
               <div class="auth-field">
-                <label for="signupFirst"><i aria-hidden="true" data-lucide="user"></i> First Name</label>
+                <label for="signupFirst"
+                  ><i aria-hidden="true" data-lucide="user"></i> First Name</label
+                >
                 <input type="text" id="signupFirst" placeholder="Alex" required />
               </div>
               <div class="auth-field">
@@ -200,7 +224,9 @@
               <input type="email" id="signupEmail" placeholder="you@example.com" required />
             </div>
             <div class="auth-field">
-              <label for="signupPassword"><i aria-hidden="true" data-lucide="lock"></i> Password</label>
+              <label for="signupPassword"
+                ><i aria-hidden="true" data-lucide="lock"></i> Password</label
+              >
               <div class="password-wrap">
                 <input
                   type="password"
@@ -255,7 +281,7 @@
     </div>
 
     <!-- Sidebar Navigation -->
-    <nav class="sidebar" id="sidebar">
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
       <div class="sidebar-logo">
         <div class="logo-icon">
           <i aria-hidden="true" data-lucide="leaf" class="logo-leaf"></i>
@@ -328,8 +354,13 @@
     </nav>
 
     <!-- Mobile Top Bar -->
-    <header class="mobile-header">
-      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle Navigation">
+    <header class="mobile-header" role="banner">
+      <button
+        class="hamburger"
+        id="hamburger"
+        onclick="toggleMobileNav()"
+        aria-label="Toggle Navigation"
+      >
         <i aria-hidden="true" data-lucide="menu"></i>
       </button>
       <span class="mobile-title">EcoTrack</span>
@@ -340,7 +371,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" id="main-content" role="main" aria-label="Application content">
       <!-- ===== DASHBOARD PAGE ===== -->
       <section class="page" id="page-dashboard">
         <div class="page-header">
@@ -375,7 +406,9 @@
             <div class="stat-trend" id="monthTrend">—</div>
           </div>
           <div class="stat-card glow-purple">
-            <div class="stat-icon purple"><i aria-hidden="true" data-lucide="trending-down"></i></div>
+            <div class="stat-icon purple">
+              <i aria-hidden="true" data-lucide="trending-down"></i>
+            </div>
             <div class="stat-info">
               <span class="stat-label">Yearly Projection</span>
               <span class="stat-value" id="yearCO2">0.0</span>
@@ -464,7 +497,9 @@
         <div class="glass-card">
           <div class="card-header">
             <h3><i aria-hidden="true" data-lucide="activity"></i> Recent Activity</h3>
-            <button aria-label="Navigate" class="btn-text" onclick="navigate('calculator')">+ Add Entry</button>
+            <button aria-label="Navigate" class="btn-text" onclick="navigate('calculator')">
+              + Add Entry
+            </button>
           </div>
           <div class="activity-list" id="recentActivity">
             <div class="empty-state">
@@ -495,16 +530,36 @@
 
         <!-- Category Tabs -->
         <div class="category-tabs">
-          <button aria-label="Transport Tab" class="cat-tab active" id="tab-transport" onclick="switchCategory('transport')">
+          <button
+            aria-label="Transport Tab"
+            class="cat-tab active"
+            id="tab-transport"
+            onclick="switchCategory('transport')"
+          >
             <i aria-hidden="true" data-lucide="car"></i><span>Transport</span>
           </button>
-          <button aria-label="Energy Tab" class="cat-tab" id="tab-energy" onclick="switchCategory('energy')">
+          <button
+            aria-label="Energy Tab"
+            class="cat-tab"
+            id="tab-energy"
+            onclick="switchCategory('energy')"
+          >
             <i aria-hidden="true" data-lucide="zap"></i><span>Energy</span>
           </button>
-          <button aria-label="Food Tab" class="cat-tab" id="tab-food" onclick="switchCategory('food')">
+          <button
+            aria-label="Food Tab"
+            class="cat-tab"
+            id="tab-food"
+            onclick="switchCategory('food')"
+          >
             <i aria-hidden="true" data-lucide="utensils"></i><span>Food</span>
           </button>
-          <button aria-label="Waste Tab" class="cat-tab" id="tab-waste" onclick="switchCategory('waste')">
+          <button
+            aria-label="Waste Tab"
+            class="cat-tab"
+            id="tab-waste"
+            onclick="switchCategory('waste')"
+          >
             <i aria-hidden="true" data-lucide="trash-2"></i><span>Waste</span>
           </button>
         </div>
@@ -647,7 +702,9 @@
         <!-- Food Panel -->
         <div class="calc-panel hidden" id="panel-food">
           <div class="glass-card">
-            <h3 class="panel-title"><i aria-hidden="true" data-lucide="utensils"></i> Food & Diet</h3>
+            <h3 class="panel-title">
+              <i aria-hidden="true" data-lucide="utensils"></i> Food & Diet
+            </h3>
             <div class="input-grid">
               <div class="input-group">
                 <label>🥩 Beef / Lamb</label>
@@ -744,7 +801,9 @@
         <!-- Waste Panel -->
         <div class="calc-panel hidden" id="panel-waste">
           <div class="glass-card">
-            <h3 class="panel-title"><i aria-hidden="true" data-lucide="trash-2"></i> Waste & Consumption</h3>
+            <h3 class="panel-title">
+              <i aria-hidden="true" data-lucide="trash-2"></i> Waste & Consumption
+            </h3>
             <div class="input-grid">
               <div class="input-group">
                 <label for="wasteKg">🗑️ General Waste</label>
@@ -891,28 +950,36 @@
           <!-- Stats Cards -->
           <div class="mini-stats-grid full-width">
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="arrow-down-circle"></i></div>
+              <div class="mini-stat-icon">
+                <i aria-hidden="true" data-lucide="arrow-down-circle"></i>
+              </div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Best Month</span>
                 <span class="mini-stat-val" id="bestMonth">—</span>
               </div>
             </div>
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="arrow-up-circle"></i></div>
+              <div class="mini-stat-icon">
+                <i aria-hidden="true" data-lucide="arrow-up-circle"></i>
+              </div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Biggest Category</span>
                 <span class="mini-stat-val" id="biggestCat">—</span>
               </div>
             </div>
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="minus-circle"></i></div>
+              <div class="mini-stat-icon">
+                <i aria-hidden="true" data-lucide="minus-circle"></i>
+              </div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Total Saved vs Avg</span>
                 <span class="mini-stat-val" id="totalSaved">—</span>
               </div>
             </div>
             <div class="mini-stat-card">
-              <div class="mini-stat-icon"><i aria-hidden="true" data-lucide="calendar-check"></i></div>
+              <div class="mini-stat-icon">
+                <i aria-hidden="true" data-lucide="calendar-check"></i>
+              </div>
               <div class="mini-stat-info">
                 <span class="mini-stat-label">Logs Recorded</span>
                 <span class="mini-stat-val" id="logsCount">0</span>
@@ -1033,10 +1100,16 @@
           activities, set goals, and earn eco-achievements.
         </p>
         <div class="modal-features">
-          <div class="modal-feature"><i aria-hidden="true" data-lucide="bar-chart-2"></i> Track emissions</div>
+          <div class="modal-feature">
+            <i aria-hidden="true" data-lucide="bar-chart-2"></i> Track emissions
+          </div>
           <div class="modal-feature"><i aria-hidden="true" data-lucide="target"></i> Set goals</div>
-          <div class="modal-feature"><i aria-hidden="true" data-lucide="award"></i> Earn badges</div>
-          <div class="modal-feature"><i aria-hidden="true" data-lucide="book-open"></i> Learn & reduce</div>
+          <div class="modal-feature">
+            <i aria-hidden="true" data-lucide="award"></i> Earn badges
+          </div>
+          <div class="modal-feature">
+            <i aria-hidden="true" data-lucide="book-open"></i> Learn & reduce
+          </div>
         </div>
         <button class="btn-primary btn-full" onclick="closeOnboarding()">
           <i aria-hidden="true" data-lucide="arrow-right"></i> Let's Get Started
