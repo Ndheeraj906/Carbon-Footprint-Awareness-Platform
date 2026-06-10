@@ -2,24 +2,24 @@ module.exports = [
   {
     languageOptions: {
       ecmaVersion: 12,
-      sourceType: "commonjs",
+      sourceType: 'commonjs',
       globals: {
         browser: true,
-        crypto: "readonly",
-        lucide: "readonly",
-        Chart: "readonly",
-        localStorage: "readonly",
-        window: "readonly",
-        document: "readonly",
-        setTimeout: "readonly",
-        setInterval: "readonly",
-        Date: "readonly"
-      }
+        crypto: 'readonly',
+        lucide: 'readonly',
+        Chart: 'readonly',
+        localStorage: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        Date: 'readonly',
+      },
     },
     rules: {
-      "no-unused-vars": "warn",
-      "no-console": "off",
-      "eqeqeq": "error"
-    }
-  }
+      'no-unused-vars': 'warn',
+      'no-console': 'off',
+      eqeqeq: 'error',
+    },
+  },
 ];

@@ -1,841 +1,1049 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EcoTrack — Carbon Footprint Awareness Platform</title>
-  <meta name="description" content="Track, understand, and reduce your personal carbon footprint with personalized insights, interactive analytics, and eco-challenges." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <!-- Animated background particles -->
-  <div class="bg-particles" id="bgParticles"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoTrack — Carbon Footprint Awareness Platform</title>
+    <meta
+      name="description"
+      content="Track, understand, and reduce your personal carbon footprint with personalized insights, interactive analytics, and eco-challenges."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net https://unpkg.com; img-src 'self' data: https:;"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bgParticles"></div>
 
-  <!-- ===== AUTH SCREEN ===== -->
-  <div class="auth-overlay" id="authOverlay">
-    <div class="auth-left">
-      <div class="auth-brand">
-        <div class="auth-logo-icon"><span>🌿</span></div>
-        <span class="auth-logo-title">EcoTrack</span>
-      </div>
-      <h2 class="auth-headline">Track your carbon.<br/>Change the planet.</h2>
-      <p class="auth-tagline">Join thousands of people reducing their footprint with personalized insights and eco-challenges.</p>
-      <div class="auth-features">
-        <div class="auth-feat"><span class="auth-feat-icon">📊</span><span>Real-time CO₂ tracking across all activities</span></div>
-        <div class="auth-feat"><span class="auth-feat-icon">🎯</span><span>Personalized reduction goals & challenges</span></div>
-        <div class="auth-feat"><span class="auth-feat-icon">🏆</span><span>Earn badges and climb eco levels</span></div>
-        <div class="auth-feat"><span class="auth-feat-icon">💡</span><span>Learn actionable tips backed by science</span></div>
-      </div>
-      <div class="auth-stats">
-        <div class="auth-stat"><strong>12,400+</strong><span>Users tracking</span></div>
-        <div class="auth-stat"><strong>4.2M kg</strong><span>CO₂ saved</span></div>
-        <div class="auth-stat"><strong>98%</strong><span>Satisfaction</span></div>
-      </div>
-    </div>
-
-    <div class="auth-right">
-      <div class="auth-card glass-card">
-        <!-- Tabs -->
-        <div class="auth-tabs">
-          <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
-          <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
+    <!-- ===== AUTH SCREEN ===== -->
+    <div class="auth-overlay" id="authOverlay">
+      <div class="auth-left">
+        <div class="auth-brand">
+          <div class="auth-logo-icon"><span>🌿</span></div>
+          <span class="auth-logo-title">EcoTrack</span>
         </div>
-
-        <!-- Login Form -->
-        <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
-          <div class="auth-welcome">
-            <div class="auth-welcome-icon">👋</div>
-            <h3>Welcome back!</h3>
-            <p>Sign in to continue your eco journey</p>
-            <div class="demo-creds-hint" onclick="autoFillDemo()" title="Click to auto-fill demo credentials">
-              <span>💡 <strong>Demo:</strong> admin@ecotrack.com / admin123</span>
-              <span class="click-fill-badge">Auto-fill</span>
-            </div>
+        <h2 class="auth-headline">Track your carbon.<br />Change the planet.</h2>
+        <p class="auth-tagline">
+          Join thousands of people reducing their footprint with personalized insights and
+          eco-challenges.
+        </p>
+        <div class="auth-features">
+          <div class="auth-feat">
+            <span class="auth-feat-icon">📊</span
+            ><span>Real-time CO₂ tracking across all activities</span>
           </div>
-          <div class="auth-field">
-            <label for="loginEmail"><i data-lucide="mail"></i> Email</label>
-            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" />
+          <div class="auth-feat">
+            <span class="auth-feat-icon">🎯</span
+            ><span>Personalized reduction goals & challenges</span>
           </div>
-          <div class="auth-field">
-            <label for="loginPassword"><i data-lucide="lock"></i> Password</label>
-            <div class="password-wrap">
-              <input type="password" id="loginPassword" placeholder="Your password" required autocomplete="current-password" />
-              <button type="button" class="pwd-toggle" onclick="togglePwd('loginPassword', this)" aria-label="Toggle password visibility"><i data-lucide="eye"></i></button>
-            </div>
+          <div class="auth-feat">
+            <span class="auth-feat-icon">🏆</span><span>Earn badges and climb eco levels</span>
           </div>
-          <div class="auth-remember">
-            <label class="checkbox-label">
-              <input type="checkbox" id="rememberMe" />
-              <span class="checkmark"></span>
-              Remember me
-            </label>
-            <button type="button" class="auth-forgot" onclick="handleForgot()">Forgot password?</button>
+          <div class="auth-feat">
+            <span class="auth-feat-icon">💡</span
+            ><span>Learn actionable tips backed by science</span>
           </div>
-          <div class="auth-error" id="loginError"></div>
-          <button type="submit" class="btn-primary btn-full auth-submit" id="loginBtn">
-            <i data-lucide="log-in"></i> Sign In
-          </button>
-          <div class="auth-divider"><span>or continue with</span></div>
-          <div class="auth-socials">
-            <button type="button" class="social-btn" onclick="handleSocialLogin('Google')" aria-label="Sign in with Google">
-              <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-              Google
-            </button>
-            <button type="button" class="social-btn" onclick="handleSocialLogin('GitHub')" aria-label="Sign in with GitHub">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-              GitHub
-            </button>
-          </div>
-        </form>
-
-        <!-- Signup Form -->
-        <form class="auth-form hidden" id="signupForm" onsubmit="handleSignup(event)">
-          <div class="auth-welcome">
-            <div class="auth-welcome-icon">🌱</div>
-            <h3>Create your account</h3>
-            <p>Start your journey to a greener lifestyle</p>
-          </div>
-          <div class="auth-fields-row">
-            <div class="auth-field">
-              <label for="signupFirst"><i data-lucide="user"></i> First Name</label>
-              <input type="text" id="signupFirst" placeholder="Alex" required />
-            </div>
-            <div class="auth-field">
-              <label for="signupLast">Last Name</label>
-              <input type="text" id="signupLast" placeholder="Johnson" />
-            </div>
-          </div>
-          <div class="auth-field">
-            <label for="signupEmail"><i data-lucide="mail"></i> Email</label>
-            <input type="email" id="signupEmail" placeholder="you@example.com" required />
-          </div>
-          <div class="auth-field">
-            <label for="signupPassword"><i data-lucide="lock"></i> Password</label>
-            <div class="password-wrap">
-              <input type="password" id="signupPassword" placeholder="Min. 6 characters" required minlength="6" oninput="checkPasswordStrength(this.value)" />
-              <button type="button" class="pwd-toggle" onclick="togglePwd('signupPassword', this)" aria-label="Toggle password visibility"><i data-lucide="eye"></i></button>
-            </div>
-            <div class="password-strength" id="pwdStrength">
-              <div class="pwd-bar" id="pwdBar"></div>
-              <span id="pwdLabel"></span>
-            </div>
-          </div>
-          <div class="auth-field">
-            <label><i data-lucide="globe"></i> Country</label>
-            <select id="signupCountry">
-              <option value="">Select your country</option>
-              <option value="us">🇺🇸 United States</option>
-              <option value="gb">🇬🇧 United Kingdom</option>
-              <option value="in">🇮🇳 India</option>
-              <option value="de">🇩🇪 Germany</option>
-              <option value="ca">🇨🇦 Canada</option>
-              <option value="au">🇦🇺 Australia</option>
-              <option value="other">🌍 Other</option>
-            </select>
-          </div>
-          <div class="auth-terms">
-            <label class="checkbox-label">
-              <input type="checkbox" id="agreeTerms" required />
-              <span class="checkmark"></span>
-              I agree to the <a href="#" onclick="return false">Terms</a> &amp; <a href="#" onclick="return false">Privacy Policy</a>
-            </label>
-          </div>
-          <div class="auth-error" id="signupError"></div>
-          <button type="submit" class="btn-primary btn-full auth-submit" id="signupBtn">
-            <i data-lucide="user-plus"></i> Create Account
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-icon">
-        <i data-lucide="leaf" class="logo-leaf"></i>
-      </div>
-      <div class="logo-text">
-        <span class="logo-title">EcoTrack</span>
-        <span class="logo-sub">Carbon Platform</span>
-      </div>
-    </div>
-
-    <ul class="nav-links">
-      <li><a href="#dashboard" class="nav-link active" id="nav-dashboard" onclick="navigate('dashboard')">
-        <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
-      </a></li>
-      <li><a href="#calculator" class="nav-link" id="nav-calculator" onclick="navigate('calculator')">
-        <i data-lucide="calculator"></i><span>Log Activity</span>
-      </a></li>
-      <li><a href="#analytics" class="nav-link" id="nav-analytics" onclick="navigate('analytics')">
-        <i data-lucide="bar-chart-2"></i><span>Analytics</span>
-      </a></li>
-      <li><a href="#goals" class="nav-link" id="nav-goals" onclick="navigate('goals')">
-        <i data-lucide="target"></i><span>Goals</span>
-      </a></li>
-      <li><a href="#learn" class="nav-link" id="nav-learn" onclick="navigate('learn')">
-        <i data-lucide="book-open"></i><span>Learn</span>
-      </a></li>
-    </ul>
-
-    <div class="sidebar-profile">
-      <!-- User Avatar & Name -->
-      <div class="sidebar-user" id="sidebarUser">
-        <div class="sidebar-avatar" id="sidebarAvatar">A</div>
-        <div class="sidebar-user-info">
-          <span class="sidebar-username" id="sidebarUsername">User</span>
-          <span class="sidebar-email-display" id="sidebarEmailDisplay">user@eco.com</span>
+        </div>
+        <div class="auth-stats">
+          <div class="auth-stat"><strong>12,400+</strong><span>Users tracking</span></div>
+          <div class="auth-stat"><strong>4.2M kg</strong><span>CO₂ saved</span></div>
+          <div class="auth-stat"><strong>98%</strong><span>Satisfaction</span></div>
         </div>
       </div>
-      <div class="eco-level-badge" id="ecoLevelBadge">
-        <i data-lucide="sprout"></i>
-        <span id="ecoLevelText">Seedling</span>
+
+      <div class="auth-right">
+        <div class="auth-card glass-card">
+          <!-- Tabs -->
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">
+              Sign In
+            </button>
+            <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">
+              Sign Up
+            </button>
+          </div>
+
+          <!-- Login Form -->
+          <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+            <div class="auth-welcome">
+              <div class="auth-welcome-icon">👋</div>
+              <h3>Welcome back!</h3>
+              <p>Sign in to continue your eco journey</p>
+              <div
+                class="demo-creds-hint"
+                onclick="autoFillDemo()"
+                title="Click to auto-fill demo credentials"
+              >
+                <span>💡 <strong>Demo:</strong> admin@ecotrack.com / admin123</span>
+                <span class="click-fill-badge">Auto-fill</span>
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="loginEmail"><i data-lucide="mail"></i> Email</label>
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="you@example.com"
+                required
+                autocomplete="email"
+              />
+            </div>
+            <div class="auth-field">
+              <label for="loginPassword"><i data-lucide="lock"></i> Password</label>
+              <div class="password-wrap">
+                <input
+                  type="password"
+                  id="loginPassword"
+                  placeholder="Your password"
+                  required
+                  autocomplete="current-password"
+                />
+                <button
+                  type="button"
+                  class="pwd-toggle"
+                  onclick="togglePwd('loginPassword', this)"
+                  aria-label="Toggle password visibility"
+                >
+                  <i data-lucide="eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="auth-remember">
+              <label class="checkbox-label">
+                <input type="checkbox" id="rememberMe" />
+                <span class="checkmark"></span>
+                Remember me
+              </label>
+              <button type="button" class="auth-forgot" onclick="handleForgot()">
+                Forgot password?
+              </button>
+            </div>
+            <div class="auth-error" id="loginError"></div>
+            <button type="submit" class="btn-primary btn-full auth-submit" id="loginBtn">
+              <i data-lucide="log-in"></i> Sign In
+            </button>
+            <div class="auth-divider"><span>or continue with</span></div>
+            <div class="auth-socials">
+              <button
+                type="button"
+                class="social-btn"
+                onclick="handleSocialLogin('Google')"
+                aria-label="Sign in with Google"
+              >
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                  <path
+                    fill="#EA4335"
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                  />
+                </svg>
+                Google
+              </button>
+              <button
+                type="button"
+                class="social-btn"
+                onclick="handleSocialLogin('GitHub')"
+                aria-label="Sign in with GitHub"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"
+                  />
+                </svg>
+                GitHub
+              </button>
+            </div>
+          </form>
+
+          <!-- Signup Form -->
+          <form class="auth-form hidden" id="signupForm" onsubmit="handleSignup(event)">
+            <div class="auth-welcome">
+              <div class="auth-welcome-icon">🌱</div>
+              <h3>Create your account</h3>
+              <p>Start your journey to a greener lifestyle</p>
+            </div>
+            <div class="auth-fields-row">
+              <div class="auth-field">
+                <label for="signupFirst"><i data-lucide="user"></i> First Name</label>
+                <input type="text" id="signupFirst" placeholder="Alex" required />
+              </div>
+              <div class="auth-field">
+                <label for="signupLast">Last Name</label>
+                <input type="text" id="signupLast" placeholder="Johnson" />
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="signupEmail"><i data-lucide="mail"></i> Email</label>
+              <input type="email" id="signupEmail" placeholder="you@example.com" required />
+            </div>
+            <div class="auth-field">
+              <label for="signupPassword"><i data-lucide="lock"></i> Password</label>
+              <div class="password-wrap">
+                <input
+                  type="password"
+                  id="signupPassword"
+                  placeholder="Min. 6 characters"
+                  required
+                  minlength="6"
+                  oninput="checkPasswordStrength(this.value)"
+                />
+                <button
+                  type="button"
+                  class="pwd-toggle"
+                  onclick="togglePwd('signupPassword', this)"
+                  aria-label="Toggle password visibility"
+                >
+                  <i data-lucide="eye"></i>
+                </button>
+              </div>
+              <div class="password-strength" id="pwdStrength">
+                <div class="pwd-bar" id="pwdBar"></div>
+                <span id="pwdLabel"></span>
+              </div>
+            </div>
+            <div class="auth-field">
+              <label><i data-lucide="globe"></i> Country</label>
+              <select id="signupCountry">
+                <option value="">Select your country</option>
+                <option value="us">🇺🇸 United States</option>
+                <option value="gb">🇬🇧 United Kingdom</option>
+                <option value="in">🇮🇳 India</option>
+                <option value="de">🇩🇪 Germany</option>
+                <option value="ca">🇨🇦 Canada</option>
+                <option value="au">🇦🇺 Australia</option>
+                <option value="other">🌍 Other</option>
+              </select>
+            </div>
+            <div class="auth-terms">
+              <label class="checkbox-label">
+                <input type="checkbox" id="agreeTerms" required />
+                <span class="checkmark"></span>
+                I agree to the <a href="#" onclick="return false;">Terms</a> &amp;
+                <a href="#" onclick="return false;">Privacy Policy</a>
+              </label>
+            </div>
+            <div class="auth-error" id="signupError"></div>
+            <button type="submit" class="btn-primary btn-full auth-submit" id="signupBtn">
+              <i data-lucide="user-plus"></i> Create Account
+            </button>
+          </form>
+        </div>
       </div>
-      <div class="profile-score">
-        <span class="score-label">Eco Score</span>
-        <span class="score-value" id="sidebarScore">0</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">
+          <i data-lucide="leaf" class="logo-leaf"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">EcoTrack</span>
+          <span class="logo-sub">Carbon Platform</span>
+        </div>
       </div>
-      <button class="btn-logout" onclick="handleLogout()">
-        <i data-lucide="log-out"></i> Sign Out
+
+      <ul class="nav-links">
+        <li>
+          <a
+            href="#dashboard"
+            class="nav-link active"
+            id="nav-dashboard"
+            onclick="navigate('dashboard')"
+          >
+            <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="#calculator"
+            class="nav-link"
+            id="nav-calculator"
+            onclick="navigate('calculator')"
+          >
+            <i data-lucide="calculator"></i><span>Log Activity</span>
+          </a>
+        </li>
+        <li>
+          <a href="#analytics" class="nav-link" id="nav-analytics" onclick="navigate('analytics')">
+            <i data-lucide="bar-chart-2"></i><span>Analytics</span>
+          </a>
+        </li>
+        <li>
+          <a href="#goals" class="nav-link" id="nav-goals" onclick="navigate('goals')">
+            <i data-lucide="target"></i><span>Goals</span>
+          </a>
+        </li>
+        <li>
+          <a href="#learn" class="nav-link" id="nav-learn" onclick="navigate('learn')">
+            <i data-lucide="book-open"></i><span>Learn</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-profile">
+        <!-- User Avatar & Name -->
+        <div class="sidebar-user" id="sidebarUser">
+          <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-username" id="sidebarUsername">User</span>
+            <span class="sidebar-email-display" id="sidebarEmailDisplay">user@eco.com</span>
+          </div>
+        </div>
+        <div class="eco-level-badge" id="ecoLevelBadge">
+          <i data-lucide="sprout"></i>
+          <span id="ecoLevelText">Seedling</span>
+        </div>
+        <div class="profile-score">
+          <span class="score-label">Eco Score</span>
+          <span class="score-value" id="sidebarScore">0</span>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">
+          <i data-lucide="log-out"></i> Sign Out
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Top Bar -->
+    <header class="mobile-header">
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+        <i data-lucide="menu"></i>
       </button>
-    </div>
-  </nav>
-
-  <!-- Mobile Top Bar -->
-  <header class="mobile-header">
-    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()">
-      <i data-lucide="menu"></i>
-    </button>
-    <span class="mobile-title">EcoTrack</span>
-    <div class="mobile-score">
-      <i data-lucide="zap"></i>
-      <span id="mobileScore">0</span>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="main-content">
-
-    <!-- ===== DASHBOARD PAGE ===== -->
-    <section class="page" id="page-dashboard">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Your Eco Dashboard</h1>
-          <p class="page-subtitle">Track your environmental impact in real-time</p>
-        </div>
-        <div class="streak-badge" id="streakBadge">
-          <i data-lucide="flame"></i>
-          <span id="streakCount">0</span> day streak
-        </div>
+      <span class="mobile-title">EcoTrack</span>
+      <div class="mobile-score">
+        <i data-lucide="zap"></i>
+        <span id="mobileScore">0</span>
       </div>
+    </header>
 
-      <!-- Stats Row -->
-      <div class="stats-grid">
-        <div class="stat-card glow-green">
-          <div class="stat-icon green"><i data-lucide="wind"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">Today's CO₂</span>
-            <span class="stat-value" id="todayCO2">0.0</span>
-            <span class="stat-unit">kg CO₂e</span>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- ===== DASHBOARD PAGE ===== -->
+      <section class="page" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Your Eco Dashboard</h1>
+            <p class="page-subtitle">Track your environmental impact in real-time</p>
           </div>
-          <div class="stat-trend" id="todayTrend">—</div>
-        </div>
-        <div class="stat-card glow-blue">
-          <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">This Month</span>
-            <span class="stat-value" id="monthCO2">0.0</span>
-            <span class="stat-unit">kg CO₂e</span>
+          <div class="streak-badge" id="streakBadge">
+            <i data-lucide="flame"></i>
+            <span id="streakCount">0</span> day streak
           </div>
-          <div class="stat-trend" id="monthTrend">—</div>
         </div>
-        <div class="stat-card glow-purple">
-          <div class="stat-icon purple"><i data-lucide="trending-down"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">Yearly Projection</span>
-            <span class="stat-value" id="yearCO2">0.0</span>
-            <span class="stat-unit">tCO₂e/yr</span>
-          </div>
-          <div class="stat-trend" id="yearVsAvg">vs avg</div>
-        </div>
-        <div class="stat-card glow-orange">
-          <div class="stat-icon orange"><i data-lucide="award"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">Eco Score</span>
-            <span class="stat-value" id="ecoScoreStat">0</span>
-            <span class="stat-unit">points</span>
-          </div>
-          <div class="stat-trend positive" id="ecoScoreLevel">Seedling</div>
-        </div>
-      </div>
 
-      <!-- Charts Row -->
-      <div class="charts-row">
-        <div class="glass-card chart-card big">
+        <!-- Stats Row -->
+        <div class="stats-grid">
+          <div class="stat-card glow-green">
+            <div class="stat-icon green"><i data-lucide="wind"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Today's CO₂</span>
+              <span class="stat-value" id="todayCO2">0.0</span>
+              <span class="stat-unit">kg CO₂e</span>
+            </div>
+            <div class="stat-trend" id="todayTrend">—</div>
+          </div>
+          <div class="stat-card glow-blue">
+            <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">This Month</span>
+              <span class="stat-value" id="monthCO2">0.0</span>
+              <span class="stat-unit">kg CO₂e</span>
+            </div>
+            <div class="stat-trend" id="monthTrend">—</div>
+          </div>
+          <div class="stat-card glow-purple">
+            <div class="stat-icon purple"><i data-lucide="trending-down"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Yearly Projection</span>
+              <span class="stat-value" id="yearCO2">0.0</span>
+              <span class="stat-unit">tCO₂e/yr</span>
+            </div>
+            <div class="stat-trend" id="yearVsAvg">vs avg</div>
+          </div>
+          <div class="stat-card glow-orange">
+            <div class="stat-icon orange"><i data-lucide="award"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Eco Score</span>
+              <span class="stat-value" id="ecoScoreStat">0</span>
+              <span class="stat-unit">points</span>
+            </div>
+            <div class="stat-trend positive" id="ecoScoreLevel">Seedling</div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+          <div class="glass-card chart-card big">
+            <div class="card-header">
+              <h3>Emissions by Category</h3>
+              <div class="chart-legend" id="donutLegend"></div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="categoryChart"></canvas>
+              <div class="chart-center-label">
+                <span id="chartCenterVal">0</span>
+                <small>kg CO₂e</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card tip-card">
+            <div class="card-header">
+              <h3><i data-lucide="lightbulb"></i> Daily Eco Tip</h3>
+              <button class="btn-icon" onclick="nextTip()" title="Next tip">
+                <i data-lucide="refresh-cw"></i>
+              </button>
+            </div>
+            <div class="tip-content" id="tipContent">
+              <div class="tip-category-badge" id="tipCategory">Transport</div>
+              <p id="tipText">Loading tip...</p>
+              <div class="tip-impact" id="tipImpact"></div>
+            </div>
+            <div class="tip-dots" id="tipDots"></div>
+          </div>
+        </div>
+
+        <!-- Global Comparison -->
+        <div class="glass-card comparison-card">
           <div class="card-header">
-            <h3>Emissions by Category</h3>
-            <div class="chart-legend" id="donutLegend"></div>
+            <h3><i data-lucide="globe-2"></i> Global Comparison</h3>
+            <span class="badge-info">Annual per capita</span>
           </div>
-          <div class="chart-wrapper">
-            <canvas id="categoryChart"></canvas>
-            <div class="chart-center-label">
-              <span id="chartCenterVal">0</span>
+          <div class="comparison-bars">
+            <div class="comp-bar-item">
+              <span class="comp-label">🇺🇸 USA</span>
+              <div class="comp-bar-track">
+                <div class="comp-bar-fill usa" style="width: 95%">14.5t</div>
+              </div>
+            </div>
+            <div class="comp-bar-item">
+              <span class="comp-label">🌍 Global Avg</span>
+              <div class="comp-bar-track">
+                <div class="comp-bar-fill global" style="width: 31%">4.8t</div>
+              </div>
+            </div>
+            <div class="comp-bar-item">
+              <span class="comp-label">🎯 1.5°C Target</span>
+              <div class="comp-bar-track">
+                <div class="comp-bar-fill target" style="width: 15%">2.3t</div>
+              </div>
+            </div>
+            <div class="comp-bar-item" id="yourBar">
+              <span class="comp-label">⚡ You (projected)</span>
+              <div class="comp-bar-track">
+                <div class="comp-bar-fill you" id="yourBarFill" style="width: 0%">0t</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><i data-lucide="activity"></i> Recent Activity</h3>
+            <button class="btn-text" onclick="navigate('calculator')">+ Add Entry</button>
+          </div>
+          <div class="activity-list" id="recentActivity">
+            <div class="empty-state">
+              <i data-lucide="leaf"></i>
+              <p>No activity logged yet. Start tracking!</p>
+              <button class="btn-primary" onclick="navigate('calculator')">
+                Log First Activity
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CALCULATOR PAGE ===== -->
+      <section class="page hidden" id="page-calculator">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Log Your Activity</h1>
+            <p class="page-subtitle">
+              Calculate your carbon footprint across all lifestyle categories
+            </p>
+          </div>
+          <div class="calc-preview glass-card mini">
+            <i data-lucide="zap"></i>
+            <span>Live: <strong id="liveCalcCO2">0.0</strong> kg CO₂e</span>
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+          <button class="cat-tab active" id="tab-transport" onclick="switchCategory('transport')">
+            <i data-lucide="car"></i><span>Transport</span>
+          </button>
+          <button class="cat-tab" id="tab-energy" onclick="switchCategory('energy')">
+            <i data-lucide="zap"></i><span>Energy</span>
+          </button>
+          <button class="cat-tab" id="tab-food" onclick="switchCategory('food')">
+            <i data-lucide="utensils"></i><span>Food</span>
+          </button>
+          <button class="cat-tab" id="tab-waste" onclick="switchCategory('waste')">
+            <i data-lucide="trash-2"></i><span>Waste</span>
+          </button>
+        </div>
+
+        <!-- Transport Panel -->
+        <div class="calc-panel" id="panel-transport">
+          <div class="glass-card">
+            <h3 class="panel-title"><i data-lucide="car"></i> Transportation</h3>
+            <div class="input-grid">
+              <div class="input-group">
+                <label>🚗 Car Travel Distance</label>
+                <div class="input-row">
+                  <input type="number" id="carKm" placeholder="0" min="0" oninput="recalc()" />
+                  <span class="input-unit">km</span>
+                </div>
+                <div class="input-sub">
+                  <label>Fuel Type</label>
+                  <select id="carType" onchange="recalc()">
+                    <option value="petrol">Petrol/Gasoline</option>
+                    <option value="diesel">Diesel</option>
+                    <option value="hybrid">Hybrid</option>
+                    <option value="electric">Electric</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>✈️ Short-haul Flights</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="shortFlights"
+                    placeholder="0"
+                    min="0"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">flights</span>
+                </div>
+                <small class="hint">Under 3 hours each</small>
+              </div>
+              <div class="input-group">
+                <label>🛫 Long-haul Flights</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="longFlights"
+                    placeholder="0"
+                    min="0"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">flights</span>
+                </div>
+                <small class="hint">Over 6 hours each</small>
+              </div>
+              <div class="input-group">
+                <label>🚌 Public Transit</label>
+                <div class="input-row">
+                  <input type="number" id="transitKm" placeholder="0" min="0" oninput="recalc()" />
+                  <span class="input-unit">km/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🚲 Cycling / Walking</label>
+                <div class="input-row">
+                  <input type="number" id="cycleKm" placeholder="0" min="0" oninput="recalc()" />
+                  <span class="input-unit">km/month</span>
+                </div>
+                <div class="badge-positive">Zero emissions! 🌿</div>
+              </div>
+            </div>
+            <div class="panel-result">
+              <div class="result-bar">
+                <span>Transport CO₂</span>
+                <span class="result-val" id="transportCO2">0.0 kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Energy Panel -->
+        <div class="calc-panel hidden" id="panel-energy">
+          <div class="glass-card">
+            <h3 class="panel-title"><i data-lucide="zap"></i> Home Energy</h3>
+            <div class="input-grid">
+              <div class="input-group">
+                <label>⚡ Electricity Usage</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="electricKwh"
+                    placeholder="0"
+                    min="0"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">kWh/month</span>
+                </div>
+                <div class="input-sub">
+                  <label>Energy Source</label>
+                  <select id="energySource" onchange="recalc()">
+                    <option value="grid">Standard Grid</option>
+                    <option value="renewable">Renewable (Solar/Wind)</option>
+                    <option value="partial">Partial Renewable</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🔥 Natural Gas</label>
+                <div class="input-row">
+                  <input type="number" id="gasM3" placeholder="0" min="0" oninput="recalc()" />
+                  <span class="input-unit">m³/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🛢️ Heating Oil</label>
+                <div class="input-row">
+                  <input type="number" id="heatingOil" placeholder="0" min="0" oninput="recalc()" />
+                  <span class="input-unit">liters/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🏠 Home Size</label>
+                <div class="input-row">
+                  <select id="homeSize" onchange="recalc()">
+                    <option value="1">Small apartment (&lt;50m²)</option>
+                    <option value="1.2" selected>Medium flat (50–100m²)</option>
+                    <option value="1.5">Large house (100–200m²)</option>
+                    <option value="2">Very large (&gt;200m²)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="panel-result">
+              <div class="result-bar">
+                <span>Energy CO₂</span>
+                <span class="result-val" id="energyCO2">0.0 kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food Panel -->
+        <div class="calc-panel hidden" id="panel-food">
+          <div class="glass-card">
+            <h3 class="panel-title"><i data-lucide="utensils"></i> Food & Diet</h3>
+            <div class="input-grid">
+              <div class="input-group">
+                <label>🥩 Beef / Lamb</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="beefKg"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">kg/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🍗 Poultry / Pork</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="poultryKg"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">kg/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🐟 Seafood / Fish</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="fishKg"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">kg/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🥛 Dairy Products</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="dairyKg"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">kg/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🥦 Vegetables / Legumes</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="veggieKg"
+                    placeholder="0"
+                    min="0"
+                    step="0.1"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">kg/month</span>
+                </div>
+                <div class="badge-positive">Low carbon choice! 🌿</div>
+              </div>
+              <div class="input-group">
+                <label>🌱 Diet Style</label>
+                <select id="dietStyle" onchange="recalc()">
+                  <option value="1.3">Heavy meat eater</option>
+                  <option value="1.1">Moderate meat eater</option>
+                  <option value="1.0" selected>Average</option>
+                  <option value="0.8">Flexitarian</option>
+                  <option value="0.6">Vegetarian</option>
+                  <option value="0.5">Vegan</option>
+                </select>
+              </div>
+            </div>
+            <div class="panel-result">
+              <div class="result-bar">
+                <span>Food CO₂</span>
+                <span class="result-val" id="foodCO2">0.0 kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waste Panel -->
+        <div class="calc-panel hidden" id="panel-waste">
+          <div class="glass-card">
+            <h3 class="panel-title"><i data-lucide="trash-2"></i> Waste & Consumption</h3>
+            <div class="input-grid">
+              <div class="input-group">
+                <label>🗑️ General Waste</label>
+                <div class="input-row">
+                  <input type="number" id="wasteKg" placeholder="0" min="0" oninput="recalc()" />
+                  <span class="input-unit">kg/week</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>♻️ Recycling Rate</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="recyclingRate"
+                    placeholder="0"
+                    min="0"
+                    max="100"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">%</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>🛍️ New Clothing Items</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="clothingItems"
+                    placeholder="0"
+                    min="0"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">items/month</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>📦 Online Shopping</label>
+                <div class="input-row">
+                  <input
+                    type="number"
+                    id="onlineShopping"
+                    placeholder="0"
+                    min="0"
+                    oninput="recalc()"
+                  />
+                  <span class="input-unit">packages/month</span>
+                </div>
+              </div>
+            </div>
+            <div class="panel-result">
+              <div class="result-bar">
+                <span>Waste CO₂</span>
+                <span class="result-val" id="wasteCO2">0.0 kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log Button -->
+        <div class="calc-summary glass-card">
+          <div class="summary-breakdown" id="calcBreakdown">
+            <div class="summary-item">
+              <i data-lucide="car" class="ico-transport"></i>
+              <span>Transport</span>
+              <strong id="sum-transport">0.0</strong>
+            </div>
+            <div class="summary-item">
+              <i data-lucide="zap" class="ico-energy"></i>
+              <span>Energy</span>
+              <strong id="sum-energy">0.0</strong>
+            </div>
+            <div class="summary-item">
+              <i data-lucide="utensils" class="ico-food"></i>
+              <span>Food</span>
+              <strong id="sum-food">0.0</strong>
+            </div>
+            <div class="summary-item">
+              <i data-lucide="trash-2" class="ico-waste"></i>
+              <span>Waste</span>
+              <strong id="sum-waste">0.0</strong>
+            </div>
+          </div>
+          <div class="summary-total">
+            <span>Monthly Total</span>
+            <div class="total-value">
+              <span id="totalCO2Big">0.0</span>
               <small>kg CO₂e</small>
             </div>
           </div>
+          <button class="btn-primary btn-log" id="logBtn" onclick="logActivity()">
+            <i data-lucide="save"></i>
+            Save This Month's Data
+          </button>
         </div>
+      </section>
 
-        <div class="glass-card tip-card">
-          <div class="card-header">
-            <h3><i data-lucide="lightbulb"></i> Daily Eco Tip</h3>
-            <button class="btn-icon" onclick="nextTip()" title="Next tip">
-              <i data-lucide="refresh-cw"></i>
+      <!-- ===== ANALYTICS PAGE ===== -->
+      <section class="page hidden" id="page-analytics">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Analytics</h1>
+            <p class="page-subtitle">Visualize your carbon journey over time</p>
+          </div>
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="setAnalyticsPeriod('month', this)">
+              Month
             </button>
-          </div>
-          <div class="tip-content" id="tipContent">
-            <div class="tip-category-badge" id="tipCategory">Transport</div>
-            <p id="tipText">Loading tip...</p>
-            <div class="tip-impact" id="tipImpact"></div>
-          </div>
-          <div class="tip-dots" id="tipDots"></div>
-        </div>
-      </div>
-
-      <!-- Global Comparison -->
-      <div class="glass-card comparison-card">
-        <div class="card-header">
-          <h3><i data-lucide="globe-2"></i> Global Comparison</h3>
-          <span class="badge-info">Annual per capita</span>
-        </div>
-        <div class="comparison-bars">
-          <div class="comp-bar-item">
-            <span class="comp-label">🇺🇸 USA</span>
-            <div class="comp-bar-track">
-              <div class="comp-bar-fill usa" style="width: 95%">14.5t</div>
-            </div>
-          </div>
-          <div class="comp-bar-item">
-            <span class="comp-label">🌍 Global Avg</span>
-            <div class="comp-bar-track">
-              <div class="comp-bar-fill global" style="width: 31%">4.8t</div>
-            </div>
-          </div>
-          <div class="comp-bar-item">
-            <span class="comp-label">🎯 1.5°C Target</span>
-            <div class="comp-bar-track">
-              <div class="comp-bar-fill target" style="width: 15%">2.3t</div>
-            </div>
-          </div>
-          <div class="comp-bar-item" id="yourBar">
-            <span class="comp-label">⚡ You (projected)</span>
-            <div class="comp-bar-track">
-              <div class="comp-bar-fill you" id="yourBarFill" style="width: 0%">0t</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="glass-card">
-        <div class="card-header">
-          <h3><i data-lucide="activity"></i> Recent Activity</h3>
-          <button class="btn-text" onclick="navigate('calculator')">+ Add Entry</button>
-        </div>
-        <div class="activity-list" id="recentActivity">
-          <div class="empty-state">
-            <i data-lucide="leaf"></i>
-            <p>No activity logged yet. Start tracking!</p>
-            <button class="btn-primary" onclick="navigate('calculator')">Log First Activity</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== CALCULATOR PAGE ===== -->
-    <section class="page hidden" id="page-calculator">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Log Your Activity</h1>
-          <p class="page-subtitle">Calculate your carbon footprint across all lifestyle categories</p>
-        </div>
-        <div class="calc-preview glass-card mini">
-          <i data-lucide="zap"></i>
-          <span>Live: <strong id="liveCalcCO2">0.0</strong> kg CO₂e</span>
-        </div>
-      </div>
-
-      <!-- Category Tabs -->
-      <div class="category-tabs">
-        <button class="cat-tab active" id="tab-transport" onclick="switchCategory('transport')">
-          <i data-lucide="car"></i><span>Transport</span>
-        </button>
-        <button class="cat-tab" id="tab-energy" onclick="switchCategory('energy')">
-          <i data-lucide="zap"></i><span>Energy</span>
-        </button>
-        <button class="cat-tab" id="tab-food" onclick="switchCategory('food')">
-          <i data-lucide="utensils"></i><span>Food</span>
-        </button>
-        <button class="cat-tab" id="tab-waste" onclick="switchCategory('waste')">
-          <i data-lucide="trash-2"></i><span>Waste</span>
-        </button>
-      </div>
-
-      <!-- Transport Panel -->
-      <div class="calc-panel" id="panel-transport">
-        <div class="glass-card">
-          <h3 class="panel-title"><i data-lucide="car"></i> Transportation</h3>
-          <div class="input-grid">
-            <div class="input-group">
-              <label>🚗 Car Travel Distance</label>
-              <div class="input-row">
-                <input type="number" id="carKm" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">km</span>
-              </div>
-              <div class="input-sub">
-                <label>Fuel Type</label>
-                <select id="carType" onchange="recalc()">
-                  <option value="petrol">Petrol/Gasoline</option>
-                  <option value="diesel">Diesel</option>
-                  <option value="hybrid">Hybrid</option>
-                  <option value="electric">Electric</option>
-                </select>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>✈️ Short-haul Flights</label>
-              <div class="input-row">
-                <input type="number" id="shortFlights" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">flights</span>
-              </div>
-              <small class="hint">Under 3 hours each</small>
-            </div>
-            <div class="input-group">
-              <label>🛫 Long-haul Flights</label>
-              <div class="input-row">
-                <input type="number" id="longFlights" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">flights</span>
-              </div>
-              <small class="hint">Over 6 hours each</small>
-            </div>
-            <div class="input-group">
-              <label>🚌 Public Transit</label>
-              <div class="input-row">
-                <input type="number" id="transitKm" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">km/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🚲 Cycling / Walking</label>
-              <div class="input-row">
-                <input type="number" id="cycleKm" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">km/month</span>
-              </div>
-              <div class="badge-positive">Zero emissions! 🌿</div>
-            </div>
-          </div>
-          <div class="panel-result">
-            <div class="result-bar">
-              <span>Transport CO₂</span>
-              <span class="result-val" id="transportCO2">0.0 kg</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Energy Panel -->
-      <div class="calc-panel hidden" id="panel-energy">
-        <div class="glass-card">
-          <h3 class="panel-title"><i data-lucide="zap"></i> Home Energy</h3>
-          <div class="input-grid">
-            <div class="input-group">
-              <label>⚡ Electricity Usage</label>
-              <div class="input-row">
-                <input type="number" id="electricKwh" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">kWh/month</span>
-              </div>
-              <div class="input-sub">
-                <label>Energy Source</label>
-                <select id="energySource" onchange="recalc()">
-                  <option value="grid">Standard Grid</option>
-                  <option value="renewable">Renewable (Solar/Wind)</option>
-                  <option value="partial">Partial Renewable</option>
-                </select>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🔥 Natural Gas</label>
-              <div class="input-row">
-                <input type="number" id="gasM3" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">m³/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🛢️ Heating Oil</label>
-              <div class="input-row">
-                <input type="number" id="heatingOil" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">liters/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🏠 Home Size</label>
-              <div class="input-row">
-                <select id="homeSize" onchange="recalc()">
-                  <option value="1">Small apartment (&lt;50m²)</option>
-                  <option value="1.2" selected>Medium flat (50–100m²)</option>
-                  <option value="1.5">Large house (100–200m²)</option>
-                  <option value="2">Very large (&gt;200m²)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="panel-result">
-            <div class="result-bar">
-              <span>Energy CO₂</span>
-              <span class="result-val" id="energyCO2">0.0 kg</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Food Panel -->
-      <div class="calc-panel hidden" id="panel-food">
-        <div class="glass-card">
-          <h3 class="panel-title"><i data-lucide="utensils"></i> Food & Diet</h3>
-          <div class="input-grid">
-            <div class="input-group">
-              <label>🥩 Beef / Lamb</label>
-              <div class="input-row">
-                <input type="number" id="beefKg" placeholder="0" min="0" step="0.1" oninput="recalc()" />
-                <span class="input-unit">kg/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🍗 Poultry / Pork</label>
-              <div class="input-row">
-                <input type="number" id="poultryKg" placeholder="0" min="0" step="0.1" oninput="recalc()" />
-                <span class="input-unit">kg/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🐟 Seafood / Fish</label>
-              <div class="input-row">
-                <input type="number" id="fishKg" placeholder="0" min="0" step="0.1" oninput="recalc()" />
-                <span class="input-unit">kg/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🥛 Dairy Products</label>
-              <div class="input-row">
-                <input type="number" id="dairyKg" placeholder="0" min="0" step="0.1" oninput="recalc()" />
-                <span class="input-unit">kg/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🥦 Vegetables / Legumes</label>
-              <div class="input-row">
-                <input type="number" id="veggieKg" placeholder="0" min="0" step="0.1" oninput="recalc()" />
-                <span class="input-unit">kg/month</span>
-              </div>
-              <div class="badge-positive">Low carbon choice! 🌿</div>
-            </div>
-            <div class="input-group">
-              <label>🌱 Diet Style</label>
-              <select id="dietStyle" onchange="recalc()">
-                <option value="1.3">Heavy meat eater</option>
-                <option value="1.1">Moderate meat eater</option>
-                <option value="1.0" selected>Average</option>
-                <option value="0.8">Flexitarian</option>
-                <option value="0.6">Vegetarian</option>
-                <option value="0.5">Vegan</option>
-              </select>
-            </div>
-          </div>
-          <div class="panel-result">
-            <div class="result-bar">
-              <span>Food CO₂</span>
-              <span class="result-val" id="foodCO2">0.0 kg</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Waste Panel -->
-      <div class="calc-panel hidden" id="panel-waste">
-        <div class="glass-card">
-          <h3 class="panel-title"><i data-lucide="trash-2"></i> Waste & Consumption</h3>
-          <div class="input-grid">
-            <div class="input-group">
-              <label>🗑️ General Waste</label>
-              <div class="input-row">
-                <input type="number" id="wasteKg" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">kg/week</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>♻️ Recycling Rate</label>
-              <div class="input-row">
-                <input type="number" id="recyclingRate" placeholder="0" min="0" max="100" oninput="recalc()" />
-                <span class="input-unit">%</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>🛍️ New Clothing Items</label>
-              <div class="input-row">
-                <input type="number" id="clothingItems" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">items/month</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>📦 Online Shopping</label>
-              <div class="input-row">
-                <input type="number" id="onlineShopping" placeholder="0" min="0" oninput="recalc()" />
-                <span class="input-unit">packages/month</span>
-              </div>
-            </div>
-          </div>
-          <div class="panel-result">
-            <div class="result-bar">
-              <span>Waste CO₂</span>
-              <span class="result-val" id="wasteCO2">0.0 kg</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Log Button -->
-      <div class="calc-summary glass-card">
-        <div class="summary-breakdown" id="calcBreakdown">
-          <div class="summary-item">
-            <i data-lucide="car" class="ico-transport"></i>
-            <span>Transport</span>
-            <strong id="sum-transport">0.0</strong>
-          </div>
-          <div class="summary-item">
-            <i data-lucide="zap" class="ico-energy"></i>
-            <span>Energy</span>
-            <strong id="sum-energy">0.0</strong>
-          </div>
-          <div class="summary-item">
-            <i data-lucide="utensils" class="ico-food"></i>
-            <span>Food</span>
-            <strong id="sum-food">0.0</strong>
-          </div>
-          <div class="summary-item">
-            <i data-lucide="trash-2" class="ico-waste"></i>
-            <span>Waste</span>
-            <strong id="sum-waste">0.0</strong>
-          </div>
-        </div>
-        <div class="summary-total">
-          <span>Monthly Total</span>
-          <div class="total-value">
-            <span id="totalCO2Big">0.0</span>
-            <small>kg CO₂e</small>
-          </div>
-        </div>
-        <button class="btn-primary btn-log" id="logBtn" onclick="logActivity()">
-          <i data-lucide="save"></i>
-          Save This Month's Data
-        </button>
-      </div>
-    </section>
-
-    <!-- ===== ANALYTICS PAGE ===== -->
-    <section class="page hidden" id="page-analytics">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Analytics</h1>
-          <p class="page-subtitle">Visualize your carbon journey over time</p>
-        </div>
-        <div class="filter-tabs">
-          <button class="filter-tab active" onclick="setAnalyticsPeriod('month', this)">Month</button>
-          <button class="filter-tab" onclick="setAnalyticsPeriod('quarter', this)">Quarter</button>
-          <button class="filter-tab" onclick="setAnalyticsPeriod('year', this)">Year</button>
-        </div>
-      </div>
-
-      <div class="analytics-grid">
-        <div class="glass-card full-width">
-          <div class="card-header">
-            <h3><i data-lucide="trending-down"></i> Emission Trend</h3>
-            <div class="trend-indicator" id="trendIndicator">—</div>
-          </div>
-          <div class="chart-wrapper-full">
-            <canvas id="trendChart"></canvas>
+            <button class="filter-tab" onclick="setAnalyticsPeriod('quarter', this)">
+              Quarter
+            </button>
+            <button class="filter-tab" onclick="setAnalyticsPeriod('year', this)">Year</button>
           </div>
         </div>
 
+        <div class="analytics-grid">
+          <div class="glass-card full-width">
+            <div class="card-header">
+              <h3><i data-lucide="trending-down"></i> Emission Trend</h3>
+              <div class="trend-indicator" id="trendIndicator">—</div>
+            </div>
+            <div class="chart-wrapper-full">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <h3><i data-lucide="bar-chart-2"></i> Category Comparison</h3>
+            </div>
+            <div class="chart-wrapper-half">
+              <canvas id="categoryBarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <h3><i data-lucide="pie-chart"></i> Footprint Breakdown</h3>
+            </div>
+            <div class="chart-wrapper-half">
+              <canvas id="breakdownChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="mini-stats-grid full-width">
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon"><i data-lucide="arrow-down-circle"></i></div>
+              <div class="mini-stat-info">
+                <span class="mini-stat-label">Best Month</span>
+                <span class="mini-stat-val" id="bestMonth">—</span>
+              </div>
+            </div>
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon"><i data-lucide="arrow-up-circle"></i></div>
+              <div class="mini-stat-info">
+                <span class="mini-stat-label">Biggest Category</span>
+                <span class="mini-stat-val" id="biggestCat">—</span>
+              </div>
+            </div>
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon"><i data-lucide="minus-circle"></i></div>
+              <div class="mini-stat-info">
+                <span class="mini-stat-label">Total Saved vs Avg</span>
+                <span class="mini-stat-val" id="totalSaved">—</span>
+              </div>
+            </div>
+            <div class="mini-stat-card">
+              <div class="mini-stat-icon"><i data-lucide="calendar-check"></i></div>
+              <div class="mini-stat-info">
+                <span class="mini-stat-label">Logs Recorded</span>
+                <span class="mini-stat-val" id="logsCount">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== GOALS PAGE ===== -->
+      <section class="page hidden" id="page-goals">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Goals & Challenges</h1>
+            <p class="page-subtitle">Set targets and earn eco-achievements</p>
+          </div>
+        </div>
+
+        <!-- Set Goal -->
+        <div class="glass-card goal-setter">
+          <h3><i data-lucide="target"></i> Set Your Monthly Target</h3>
+          <div class="goal-input-row">
+            <div class="goal-slider-wrap">
+              <input
+                type="range"
+                id="goalSlider"
+                min="50"
+                max="800"
+                value="200"
+                oninput="updateGoalSlider()"
+              />
+              <div class="slider-labels">
+                <span>50 kg</span>
+                <span>800 kg</span>
+              </div>
+            </div>
+            <div class="goal-value-display">
+              <span id="goalDisplay">200</span>
+              <small>kg CO₂e/month</small>
+            </div>
+            <button class="btn-primary" onclick="saveGoal()">Set Goal</button>
+          </div>
+          <div class="goal-progress-section" id="goalProgressSection">
+            <div class="progress-label">
+              <span>Progress towards goal</span>
+              <span id="goalProgressText">—</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="goalProgressBar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Challenges -->
         <div class="glass-card">
           <div class="card-header">
-            <h3><i data-lucide="bar-chart-2"></i> Category Comparison</h3>
+            <h3><i data-lucide="zap"></i> Active Eco-Challenges</h3>
+            <span class="badge-info">Updated weekly</span>
           </div>
-          <div class="chart-wrapper-half">
-            <canvas id="categoryBarChart"></canvas>
-          </div>
+          <div class="challenges-grid" id="challengesGrid"></div>
         </div>
 
+        <!-- Achievements -->
         <div class="glass-card">
           <div class="card-header">
-            <h3><i data-lucide="pie-chart"></i> Footprint Breakdown</h3>
+            <h3><i data-lucide="award"></i> Achievements</h3>
+            <span class="badge-info" id="achievementCount">0 / 8 unlocked</span>
           </div>
-          <div class="chart-wrapper-half">
-            <canvas id="breakdownChart"></canvas>
-          </div>
+          <div class="achievements-grid" id="achievementsGrid"></div>
         </div>
 
-        <!-- Stats Cards -->
-        <div class="mini-stats-grid full-width">
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon"><i data-lucide="arrow-down-circle"></i></div>
-            <div class="mini-stat-info">
-              <span class="mini-stat-label">Best Month</span>
-              <span class="mini-stat-val" id="bestMonth">—</span>
-            </div>
+        <!-- Levels -->
+        <div class="glass-card levels-card">
+          <div class="card-header">
+            <h3><i data-lucide="star"></i> Eco Levels</h3>
           </div>
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon"><i data-lucide="arrow-up-circle"></i></div>
-            <div class="mini-stat-info">
-              <span class="mini-stat-label">Biggest Category</span>
-              <span class="mini-stat-val" id="biggestCat">—</span>
-            </div>
-          </div>
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon"><i data-lucide="minus-circle"></i></div>
-            <div class="mini-stat-info">
-              <span class="mini-stat-label">Total Saved vs Avg</span>
-              <span class="mini-stat-val" id="totalSaved">—</span>
-            </div>
-          </div>
-          <div class="mini-stat-card">
-            <div class="mini-stat-icon"><i data-lucide="calendar-check"></i></div>
-            <div class="mini-stat-info">
-              <span class="mini-stat-label">Logs Recorded</span>
-              <span class="mini-stat-val" id="logsCount">0</span>
-            </div>
+          <div class="levels-list" id="levelsList"></div>
+        </div>
+      </section>
+
+      <!-- ===== LEARN PAGE ===== -->
+      <section class="page hidden" id="page-learn">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Learn & Reduce</h1>
+            <p class="page-subtitle">Knowledge is the first step to action</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ===== GOALS PAGE ===== -->
-    <section class="page hidden" id="page-goals">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Goals & Challenges</h1>
-          <p class="page-subtitle">Set targets and earn eco-achievements</p>
+        <!-- Impact Facts -->
+        <div class="facts-marquee-wrap">
+          <div class="facts-marquee" id="factsMarquee"></div>
         </div>
-      </div>
 
-      <!-- Set Goal -->
-      <div class="glass-card goal-setter">
-        <h3><i data-lucide="target"></i> Set Your Monthly Target</h3>
-        <div class="goal-input-row">
-          <div class="goal-slider-wrap">
-            <input type="range" id="goalSlider" min="50" max="800" value="200" oninput="updateGoalSlider()" />
-            <div class="slider-labels">
-              <span>50 kg</span>
-              <span>800 kg</span>
-            </div>
+        <!-- Learn Cards Grid -->
+        <div class="learn-grid" id="learnGrid"></div>
+
+        <!-- Quick Wins Section -->
+        <div class="glass-card quick-wins">
+          <div class="card-header">
+            <h3><i data-lucide="check-circle"></i> Quick Wins — Reduce Today</h3>
           </div>
-          <div class="goal-value-display">
-            <span id="goalDisplay">200</span>
-            <small>kg CO₂e/month</small>
-          </div>
-          <button class="btn-primary" onclick="saveGoal()">Set Goal</button>
+          <div class="quick-wins-list" id="quickWinsList"></div>
         </div>
-        <div class="goal-progress-section" id="goalProgressSection">
-          <div class="progress-label">
-            <span>Progress towards goal</span>
-            <span id="goalProgressText">—</span>
-          </div>
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="goalProgressBar" style="width: 0%"></div>
-          </div>
+      </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Onboarding Modal -->
+    <div class="modal-overlay" id="onboardingModal">
+      <div class="modal glass-card">
+        <div class="modal-icon">🌱</div>
+        <h2>Welcome to EcoTrack!</h2>
+        <p>
+          Start your journey to understanding and reducing your carbon footprint. Log your
+          activities, set goals, and earn eco-achievements.
+        </p>
+        <div class="modal-features">
+          <div class="modal-feature"><i data-lucide="bar-chart-2"></i> Track emissions</div>
+          <div class="modal-feature"><i data-lucide="target"></i> Set goals</div>
+          <div class="modal-feature"><i data-lucide="award"></i> Earn badges</div>
+          <div class="modal-feature"><i data-lucide="book-open"></i> Learn & reduce</div>
         </div>
+        <button class="btn-primary btn-full" onclick="closeOnboarding()">
+          <i data-lucide="arrow-right"></i> Let's Get Started
+        </button>
       </div>
-
-      <!-- Challenges -->
-      <div class="glass-card">
-        <div class="card-header">
-          <h3><i data-lucide="zap"></i> Active Eco-Challenges</h3>
-          <span class="badge-info">Updated weekly</span>
-        </div>
-        <div class="challenges-grid" id="challengesGrid"></div>
-      </div>
-
-      <!-- Achievements -->
-      <div class="glass-card">
-        <div class="card-header">
-          <h3><i data-lucide="award"></i> Achievements</h3>
-          <span class="badge-info" id="achievementCount">0 / 8 unlocked</span>
-        </div>
-        <div class="achievements-grid" id="achievementsGrid"></div>
-      </div>
-
-      <!-- Levels -->
-      <div class="glass-card levels-card">
-        <div class="card-header">
-          <h3><i data-lucide="star"></i> Eco Levels</h3>
-        </div>
-        <div class="levels-list" id="levelsList"></div>
-      </div>
-    </section>
-
-    <!-- ===== LEARN PAGE ===== -->
-    <section class="page hidden" id="page-learn">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Learn & Reduce</h1>
-          <p class="page-subtitle">Knowledge is the first step to action</p>
-        </div>
-      </div>
-
-      <!-- Impact Facts -->
-      <div class="facts-marquee-wrap">
-        <div class="facts-marquee" id="factsMarquee"></div>
-      </div>
-
-      <!-- Learn Cards Grid -->
-      <div class="learn-grid" id="learnGrid"></div>
-
-      <!-- Quick Wins Section -->
-      <div class="glass-card quick-wins">
-        <div class="card-header">
-          <h3><i data-lucide="check-circle"></i> Quick Wins — Reduce Today</h3>
-        </div>
-        <div class="quick-wins-list" id="quickWinsList"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
-
-  <!-- Onboarding Modal -->
-  <div class="modal-overlay" id="onboardingModal">
-    <div class="modal glass-card">
-      <div class="modal-icon">🌱</div>
-      <h2>Welcome to EcoTrack!</h2>
-      <p>Start your journey to understanding and reducing your carbon footprint. Log your activities, set goals, and earn eco-achievements.</p>
-      <div class="modal-features">
-        <div class="modal-feature"><i data-lucide="bar-chart-2"></i> Track emissions</div>
-        <div class="modal-feature"><i data-lucide="target"></i> Set goals</div>
-        <div class="modal-feature"><i data-lucide="award"></i> Earn badges</div>
-        <div class="modal-feature"><i data-lucide="book-open"></i> Learn & reduce</div>
-      </div>
-      <button class="btn-primary btn-full" onclick="closeOnboarding()">
-        <i data-lucide="arrow-right"></i> Let's Get Started
-      </button>
     </div>
-  </div>
 
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>

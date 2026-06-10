@@ -33,18 +33,24 @@ function calculateTransportCO2(carKm, carType, shortFlights, longFlights, transi
 }
 
 function calculateEnergyCO2(electricKwh, energySource, gasM3, heatingOil, homeSize) {
-  const electricEF = energySource === 'grid' ? EF.electricGrid : energySource === 'partial' ? EF.electricPartial : EF.electricRenewable;
+  const electricEF =
+    energySource === 'grid'
+      ? EF.electricGrid
+      : energySource === 'partial'
+        ? EF.electricPartial
+        : EF.electricRenewable;
   return (electricKwh * electricEF + gasM3 * EF.naturalGas + heatingOil * EF.heatingOil) * homeSize;
 }
 
 function calculateFoodCO2(beefKg, poultryKg, fishKg, dairyKg, veggieKg, dietStyle) {
   return (
-    beefKg * EF.beef +
-    poultryKg * EF.poultry +
-    fishKg * EF.fish +
-    dairyKg * EF.dairy +
-    veggieKg * EF.veggies
-  ) * dietStyle;
+    (beefKg * EF.beef +
+      poultryKg * EF.poultry +
+      fishKg * EF.fish +
+      dairyKg * EF.dairy +
+      veggieKg * EF.veggies) *
+    dietStyle
+  );
 }
 
 function calculateWasteCO2(wasteKg, recyclingRate, clothingItems, onlineShopping) {

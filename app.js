@@ -9,15 +9,15 @@
 const EF = {
   // Transport (kg CO₂e per km)
   car: { petrol: 0.21, diesel: 0.17, hybrid: 0.12, electric: 0.05 },
-  transit: 0.089,      // per km (bus avg)
-  shortFlight: 255,    // per flight (economy, radiative forcing included)
-  longFlight: 1100,    // per flight
+  transit: 0.089, // per km (bus avg)
+  shortFlight: 255, // per flight (economy, radiative forcing included)
+  longFlight: 1100, // per flight
   // Energy (per unit/month)
   electricGrid: 0.233, // per kWh (world avg grid)
   electricRenewable: 0.02,
   electricPartial: 0.13,
-  naturalGas: 2.04,    // per m³
-  heatingOil: 2.68,    // per liter
+  naturalGas: 2.04, // per m³
+  heatingOil: 2.68, // per liter
   // Food (kg CO₂e per kg food)
   beef: 27,
   poultry: 6.9,
@@ -26,79 +26,235 @@ const EF = {
   veggies: 0.9,
   // Waste (per kg)
   wasteGeneral: 0.57,
-  clothing: 12,        // per item
-  onlinePackage: 0.5,  // per package
+  clothing: 12, // per item
+  onlinePackage: 0.5, // per package
 };
 
 // ─── Daily Eco Tips ───────────────────────────────────────────────────────────
 const ECO_TIPS = [
-  { category: 'Transport', text: 'Switch one short car trip per week to cycling or walking — saves about 2–5 kg CO₂ weekly.', impact: '🌍 Saves up to 260 kg CO₂/year' },
-  { category: 'Food', text: 'Try one plant-based meal per day. Replacing beef with legumes can cut food emissions by 50%.', impact: '🥦 Saves up to 500 kg CO₂/year' },
-  { category: 'Energy', text: 'Lower your thermostat by 1°C in winter — reduces heating energy consumption by ~5%.', impact: '⚡ Saves ~100 kg CO₂/year' },
-  { category: 'Transport', text: 'Use public transport instead of driving once a week to dramatically lower emissions.', impact: '🚌 Saves up to 4.6 tonnes CO₂/year' },
-  { category: 'Waste', text: 'Bring a reusable bag and coffee cup — single-use plastic has a hidden carbon cost.', impact: '♻️ Saves ~50 kg CO₂/year' },
-  { category: 'Food', text: 'Reduce food waste: 1/3 of all food produced is wasted, generating 8% of global emissions.', impact: '🍽️ Saves 300+ kg CO₂/year' },
-  { category: 'Energy', text: 'Unplug electronics when not in use — "vampire power" can account for 10% of your electricity bill.', impact: '🔌 Saves ~50 kg CO₂/year' },
-  { category: 'Transport', text: 'For trips under 3 km, walk or cycle — it\'s often faster than driving in urban areas.', impact: '🚶 Saves 200 kg CO₂/year' },
-  { category: 'Energy', text: 'Switch to LED bulbs — they use 80% less energy than incandescent lights.', impact: '💡 Saves ~40 kg CO₂/year per bulb' },
-  { category: 'Food', text: 'Buy local and seasonal produce — out-of-season imports have 5× the carbon footprint.', impact: '🌱 Saves 100+ kg CO₂/year' },
+  {
+    category: 'Transport',
+    text: 'Switch one short car trip per week to cycling or walking — saves about 2–5 kg CO₂ weekly.',
+    impact: '🌍 Saves up to 260 kg CO₂/year',
+  },
+  {
+    category: 'Food',
+    text: 'Try one plant-based meal per day. Replacing beef with legumes can cut food emissions by 50%.',
+    impact: '🥦 Saves up to 500 kg CO₂/year',
+  },
+  {
+    category: 'Energy',
+    text: 'Lower your thermostat by 1°C in winter — reduces heating energy consumption by ~5%.',
+    impact: '⚡ Saves ~100 kg CO₂/year',
+  },
+  {
+    category: 'Transport',
+    text: 'Use public transport instead of driving once a week to dramatically lower emissions.',
+    impact: '🚌 Saves up to 4.6 tonnes CO₂/year',
+  },
+  {
+    category: 'Waste',
+    text: 'Bring a reusable bag and coffee cup — single-use plastic has a hidden carbon cost.',
+    impact: '♻️ Saves ~50 kg CO₂/year',
+  },
+  {
+    category: 'Food',
+    text: 'Reduce food waste: 1/3 of all food produced is wasted, generating 8% of global emissions.',
+    impact: '🍽️ Saves 300+ kg CO₂/year',
+  },
+  {
+    category: 'Energy',
+    text: 'Unplug electronics when not in use — "vampire power" can account for 10% of your electricity bill.',
+    impact: '🔌 Saves ~50 kg CO₂/year',
+  },
+  {
+    category: 'Transport',
+    text: "For trips under 3 km, walk or cycle — it's often faster than driving in urban areas.",
+    impact: '🚶 Saves 200 kg CO₂/year',
+  },
+  {
+    category: 'Energy',
+    text: 'Switch to LED bulbs — they use 80% less energy than incandescent lights.',
+    impact: '💡 Saves ~40 kg CO₂/year per bulb',
+  },
+  {
+    category: 'Food',
+    text: 'Buy local and seasonal produce — out-of-season imports have 5× the carbon footprint.',
+    impact: '🌱 Saves 100+ kg CO₂/year',
+  },
 ];
 
 // ─── Eco Challenges ───────────────────────────────────────────────────────────
 const CHALLENGES = [
-  { id: 'c1', emoji: '🚶', name: 'Walk This Week', desc: 'Replace at least 3 car trips with walking or cycling this week.', points: 50 },
-  { id: 'c2', emoji: '🥦', name: 'Meatless Monday', desc: 'Skip meat every Monday for a month — plant-based all day.', points: 40 },
-  { id: 'c3', emoji: '💡', name: 'Lights Out', desc: 'Turn off all lights and unplug devices when leaving a room for 7 days.', points: 30 },
-  { id: 'c4', emoji: '🛍️', name: 'Zero New Clothes', desc: 'Go one month without buying new clothing — thrift or borrow instead.', points: 60 },
-  { id: 'c5', emoji: '🚿', name: 'Short Showers', desc: 'Keep all showers under 5 minutes for 2 weeks.', points: 25 },
-  { id: 'c6', emoji: '🌱', name: 'Plant Something', desc: 'Plant a tree, herb garden, or contribute to a reforestation project.', points: 70 },
+  {
+    id: 'c1',
+    emoji: '🚶',
+    name: 'Walk This Week',
+    desc: 'Replace at least 3 car trips with walking or cycling this week.',
+    points: 50,
+  },
+  {
+    id: 'c2',
+    emoji: '🥦',
+    name: 'Meatless Monday',
+    desc: 'Skip meat every Monday for a month — plant-based all day.',
+    points: 40,
+  },
+  {
+    id: 'c3',
+    emoji: '💡',
+    name: 'Lights Out',
+    desc: 'Turn off all lights and unplug devices when leaving a room for 7 days.',
+    points: 30,
+  },
+  {
+    id: 'c4',
+    emoji: '🛍️',
+    name: 'Zero New Clothes',
+    desc: 'Go one month without buying new clothing — thrift or borrow instead.',
+    points: 60,
+  },
+  {
+    id: 'c5',
+    emoji: '🚿',
+    name: 'Short Showers',
+    desc: 'Keep all showers under 5 minutes for 2 weeks.',
+    points: 25,
+  },
+  {
+    id: 'c6',
+    emoji: '🌱',
+    name: 'Plant Something',
+    desc: 'Plant a tree, herb garden, or contribute to a reforestation project.',
+    points: 70,
+  },
 ];
 
 // ─── Achievements ─────────────────────────────────────────────────────────────
 const ACHIEVEMENTS = [
-  { id: 'a1', emoji: '🌱', name: 'First Log', desc: 'Log your first activity', condition: d => d.logs.length >= 1 },
-  { id: 'a2', emoji: '🏆', name: 'Week Warrior', desc: 'Log activity 7 days in a row', condition: d => d.streak >= 7 },
-  { id: 'a3', emoji: '🌍', name: 'Below Global Avg', desc: 'Monthly CO₂ below 400 kg', condition: d => d.lastMonthCO2 < 400 && d.lastMonthCO2 > 0 },
-  { id: 'a4', emoji: '⚡', name: 'Energy Saver', desc: 'Log energy data 3 times', condition: d => (d.logs.filter(l => l.energy > 0)).length >= 3 },
-  { id: 'a5', emoji: '🚴', name: 'Cyclist', desc: 'Log 100+ km cycling/walking', condition: d => d.logs.reduce((s, l) => s + (l.cycleKm || 0), 0) >= 100 },
-  { id: 'a6', emoji: '🥗', name: 'Plant Powered', desc: 'Log 3 months with food CO₂ under 60 kg', condition: d => d.logs.filter(l => l.food < 60).length >= 3 },
-  { id: 'a7', emoji: '🎯', name: 'Goal Setter', desc: 'Set your first reduction goal', condition: d => d.goal > 0 },
-  { id: 'a8', emoji: '🌳', name: 'Forest Guardian', desc: 'Earn 500+ eco points', condition: d => d.ecoScore >= 500 },
+  {
+    id: 'a1',
+    emoji: '🌱',
+    name: 'First Log',
+    desc: 'Log your first activity',
+    condition: (d) => d.logs.length >= 1,
+  },
+  {
+    id: 'a2',
+    emoji: '🏆',
+    name: 'Week Warrior',
+    desc: 'Log activity 7 days in a row',
+    condition: (d) => d.streak >= 7,
+  },
+  {
+    id: 'a3',
+    emoji: '🌍',
+    name: 'Below Global Avg',
+    desc: 'Monthly CO₂ below 400 kg',
+    condition: (d) => d.lastMonthCO2 < 400 && d.lastMonthCO2 > 0,
+  },
+  {
+    id: 'a4',
+    emoji: '⚡',
+    name: 'Energy Saver',
+    desc: 'Log energy data 3 times',
+    condition: (d) => d.logs.filter((l) => l.energy > 0).length >= 3,
+  },
+  {
+    id: 'a5',
+    emoji: '🚴',
+    name: 'Cyclist',
+    desc: 'Log 100+ km cycling/walking',
+    condition: (d) => d.logs.reduce((s, l) => s + (l.cycleKm || 0), 0) >= 100,
+  },
+  {
+    id: 'a6',
+    emoji: '🥗',
+    name: 'Plant Powered',
+    desc: 'Log 3 months with food CO₂ under 60 kg',
+    condition: (d) => d.logs.filter((l) => l.food < 60).length >= 3,
+  },
+  {
+    id: 'a7',
+    emoji: '🎯',
+    name: 'Goal Setter',
+    desc: 'Set your first reduction goal',
+    condition: (d) => d.goal > 0,
+  },
+  {
+    id: 'a8',
+    emoji: '🌳',
+    name: 'Forest Guardian',
+    desc: 'Earn 500+ eco points',
+    condition: (d) => d.ecoScore >= 500,
+  },
 ];
 
 // ─── Learn Content ────────────────────────────────────────────────────────────
 const LEARN_CARDS = [
   {
-    emoji: '🚗', color: '#3b82f6', bgColor: 'rgba(59,130,246,0.15)',
+    emoji: '🚗',
+    color: '#3b82f6',
+    bgColor: 'rgba(59,130,246,0.15)',
     title: 'Transport',
     subtitle: 'Biggest personal impact lever',
     body: 'Transportation accounts for around 29% of global greenhouse gas emissions. Personal vehicles are the largest single contributor to individual carbon footprints in developed countries.',
-    stat: '4.6t', statLabel: 'CO₂ saved by going car-free for 1 year',
-    tips: ['Take public transit instead of driving', 'Combine errands into one trip', 'Work from home when possible', 'Choose direct flights over connecting routes'],
+    stat: '4.6t',
+    statLabel: 'CO₂ saved by going car-free for 1 year',
+    tips: [
+      'Take public transit instead of driving',
+      'Combine errands into one trip',
+      'Work from home when possible',
+      'Choose direct flights over connecting routes',
+    ],
   },
   {
-    emoji: '⚡', color: '#eab308', bgColor: 'rgba(234,179,8,0.15)',
+    emoji: '⚡',
+    color: '#eab308',
+    bgColor: 'rgba(234,179,8,0.15)',
     title: 'Home Energy',
     subtitle: 'Smart choices matter',
     body: 'Residential energy use accounts for ~17% of global emissions. Heating, cooling, and appliances are the key drivers. Switching to renewables is the single biggest home improvement.',
-    stat: '1.5t', statLabel: 'CO₂ saved by switching to green electricity',
-    tips: ['Use a smart thermostat', 'Switch to LED bulbs', 'Install solar panels if possible', 'Improve home insulation'],
+    stat: '1.5t',
+    statLabel: 'CO₂ saved by switching to green electricity',
+    tips: [
+      'Use a smart thermostat',
+      'Switch to LED bulbs',
+      'Install solar panels if possible',
+      'Improve home insulation',
+    ],
   },
   {
-    emoji: '🥩', color: '#f97316', bgColor: 'rgba(249,115,22,0.15)',
+    emoji: '🥩',
+    color: '#f97316',
+    bgColor: 'rgba(249,115,22,0.15)',
     title: 'Food & Diet',
     subtitle: 'What you eat shapes the planet',
     body: 'Food systems account for ~26% of global CO₂ emissions. Beef production alone uses 20× more land and emits 20× more GHGs than plant protein. Shifting to plant-rich diets is powerful.',
-    stat: '0.5t', statLabel: 'CO₂ saved by going vegan vs meat-heavy diet',
-    tips: ['Eat less red meat', 'Buy local & seasonal', 'Reduce food waste', 'Choose plant-based proteins'],
+    stat: '0.5t',
+    statLabel: 'CO₂ saved by going vegan vs meat-heavy diet',
+    tips: [
+      'Eat less red meat',
+      'Buy local & seasonal',
+      'Reduce food waste',
+      'Choose plant-based proteins',
+    ],
   },
   {
-    emoji: '♻️', color: '#a855f7', bgColor: 'rgba(168,85,247,0.15)',
+    emoji: '♻️',
+    color: '#a855f7',
+    bgColor: 'rgba(168,85,247,0.15)',
     title: 'Waste & Shopping',
     subtitle: 'Consume less, waste less',
     body: 'Consumer goods and waste account for ~16% of individual footprints. The fashion industry produces 10% of global CO₂. Every new item manufactured has an embedded carbon cost.',
-    stat: '12kg', statLabel: 'CO₂ emitted per new clothing item',
-    tips: ['Buy second-hand clothing', 'Repair instead of replace', 'Recycle properly', 'Avoid single-use plastics'],
+    stat: '12kg',
+    statLabel: 'CO₂ emitted per new clothing item',
+    tips: [
+      'Buy second-hand clothing',
+      'Repair instead of replace',
+      'Recycle properly',
+      'Avoid single-use plastics',
+    ],
   },
 ];
 
@@ -146,8 +302,11 @@ function saveState() {
 function loadState() {
   const raw = localStorage.getItem('ecotrack_v2');
   if (raw) {
-    try { state = { ...state, ...JSON.parse(raw) }; }
-    catch (e) { console.warn('State parse error, fresh start'); }
+    try {
+      state = { ...state, ...JSON.parse(raw) };
+    } catch (e) {
+      console.warn('State parse error, fresh start');
+    }
   }
 }
 
@@ -155,11 +314,17 @@ function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.className = `toast show ${type}`;
-  setTimeout(() => { toast.className = 'toast'; }, 3500);
+  setTimeout(() => {
+    toast.className = 'toast';
+  }, 3500);
 }
 
 function formatDate(d) {
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 function getMonthKey(date = new Date()) {
@@ -180,13 +345,13 @@ function animateNumber(el, target, decimals = 1, duration = 700) {
 }
 
 function getLevel(score) {
-  return ECO_LEVELS.find(l => score >= l.minScore && score <= l.maxScore) || ECO_LEVELS[0];
+  return ECO_LEVELS.find((l) => score >= l.minScore && score <= l.maxScore) || ECO_LEVELS[0];
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 function navigate(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.page').forEach((p) => p.classList.add('hidden'));
+  document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
   const target = document.getElementById(`page-${page}`);
   const navEl = document.getElementById(`nav-${page}`);
   if (target) target.classList.remove('hidden');
@@ -209,24 +374,29 @@ function toggleMobileNav() {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function updateDashboard() {
   const today = getMonthKey();
-  const thisMonthLogs = state.logs.filter(l => l.monthKey === today);
+  const thisMonthLogs = state.logs.filter((l) => l.monthKey === today);
   const monthTotal = thisMonthLogs.reduce((s, l) => s + l.total, 0);
   const todayTotal = monthTotal; // simplification: today shows current month's tracked value
 
   // Stats
   animateNumber(document.getElementById('todayCO2'), todayTotal, 1);
   animateNumber(document.getElementById('monthCO2'), monthTotal, 1);
-  const yearProjection = monthTotal * 12 / 1000; // convert to tonnes
+  const yearProjection = (monthTotal * 12) / 1000; // convert to tonnes
   animateNumber(document.getElementById('yearCO2'), yearProjection, 2);
   animateNumber(document.getElementById('ecoScoreStat'), state.ecoScore, 0);
 
   // Trends
-  const prev = state.logs.filter(l => l.monthKey !== today);
+  const prev = state.logs.filter((l) => l.monthKey !== today);
   if (prev.length > 0) {
     const prevTotal = prev.slice(-1)[0].total;
     const diff = monthTotal - prevTotal;
     const trendEl = document.getElementById('todayTrend');
-    trendEl.textContent = diff === 0 ? '— same' : (diff > 0 ? `▲ ${diff.toFixed(1)} kg` : `▼ ${Math.abs(diff).toFixed(1)} kg`);
+    trendEl.textContent =
+      diff === 0
+        ? '— same'
+        : diff > 0
+          ? `▲ ${diff.toFixed(1)} kg`
+          : `▼ ${Math.abs(diff).toFixed(1)} kg`;
     trendEl.className = `stat-trend ${diff > 0 ? 'negative' : 'positive'}`;
   }
 
@@ -267,7 +437,7 @@ function updateDashboard() {
 
 function updateCategoryDonut(logs) {
   const totals = { transport: 0, energy: 0, food: 0, waste: 0 };
-  logs.forEach(l => {
+  logs.forEach((l) => {
     totals.transport += l.transport || 0;
     totals.energy += l.energy || 0;
     totals.food += l.food || 0;
@@ -287,13 +457,23 @@ function updateCategoryDonut(logs) {
     type: 'doughnut',
     data: {
       labels,
-      datasets: [{
-        data: total === 0 ? [1, 1, 1, 1] : data,
-        backgroundColor: total === 0 ? ['rgba(255,255,255,0.05)','rgba(255,255,255,0.05)','rgba(255,255,255,0.05)','rgba(255,255,255,0.05)'] : colors,
-        borderColor: 'transparent',
-        borderWidth: 0,
-        hoverOffset: 8,
-      }]
+      datasets: [
+        {
+          data: total === 0 ? [1, 1, 1, 1] : data,
+          backgroundColor:
+            total === 0
+              ? [
+                  'rgba(255,255,255,0.05)',
+                  'rgba(255,255,255,0.05)',
+                  'rgba(255,255,255,0.05)',
+                  'rgba(255,255,255,0.05)',
+                ]
+              : colors,
+          borderColor: 'transparent',
+          borderWidth: 0,
+          hoverOffset: 8,
+        },
+      ],
     },
     options: {
       cutout: '72%',
@@ -301,17 +481,21 @@ function updateCategoryDonut(logs) {
       maintainAspectRatio: true,
       plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } },
       animation: { duration: 800, easing: 'easeInOutQuart' },
-    }
+    },
   });
 
   // Legend
   const legendEl = document.getElementById('donutLegend');
-  legendEl.innerHTML = labels.map((l, i) => `
+  legendEl.innerHTML = labels
+    .map(
+      (l, i) => `
     <div class="legend-item">
       <div class="legend-dot" style="background:${colors[i]}"></div>
       <span>${l}</span>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 }
 
 function renderRecentActivity() {
@@ -332,14 +516,15 @@ function renderRecentActivity() {
     food: { color: '#f97316', bg: 'rgba(249,115,22,0.15)', icon: 'utensils' },
     waste: { color: '#a855f7', bg: 'rgba(168,85,247,0.15)', icon: 'trash-2' },
   };
-  const biggest = log => {
-    const cats = ['transport','energy','food','waste'];
-    return cats.reduce((a, b) => (log[a] || 0) > (log[b] || 0) ? a : b);
+  const biggest = (log) => {
+    const cats = ['transport', 'energy', 'food', 'waste'];
+    return cats.reduce((a, b) => ((log[a] || 0) > (log[b] || 0) ? a : b));
   };
-  el.innerHTML = recent.map(log => {
-    const cat = biggest(log);
-    const meta = catMeta[cat];
-    return `<div class="activity-item">
+  el.innerHTML = recent
+    .map((log) => {
+      const cat = biggest(log);
+      const meta = catMeta[cat];
+      return `<div class="activity-item">
       <div class="activity-cat-icon" style="background:${meta.bg}; color:${meta.color}">
         <i data-lucide="${meta.icon}"></i>
       </div>
@@ -349,7 +534,8 @@ function renderRecentActivity() {
       </div>
       <div class="activity-co2">${log.total.toFixed(1)} kg</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
   lucide.createIcons();
 }
 
@@ -361,8 +547,9 @@ function renderTip() {
   document.getElementById('tipImpact').textContent = tip.impact;
 
   const dotsEl = document.getElementById('tipDots');
-  dotsEl.innerHTML = ECO_TIPS.map((_, i) =>
-    `<div class="tip-dot ${i === state.tipIndex % ECO_TIPS.length ? 'active' : ''}"></div>`
+  dotsEl.innerHTML = ECO_TIPS.map(
+    (_, i) =>
+      `<div class="tip-dot ${i === state.tipIndex % ECO_TIPS.length ? 'active' : ''}"></div>`
   ).join('');
 }
 
@@ -375,8 +562,8 @@ function nextTip() {
 let calcValues = { transport: 0, energy: 0, food: 0, waste: 0 };
 
 function switchCategory(cat) {
-  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.calc-panel').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.cat-tab').forEach((t) => t.classList.remove('active'));
+  document.querySelectorAll('.calc-panel').forEach((p) => p.classList.add('hidden'));
   document.getElementById(`tab-${cat}`).classList.add('active');
   document.getElementById(`panel-${cat}`).classList.remove('hidden');
 }
@@ -403,8 +590,14 @@ function recalc() {
   const heatingOil = parseFloat(document.getElementById('heatingOil').value) || 0;
   const homeSize = parseFloat(document.getElementById('homeSize').value) || 1;
 
-  const electricEF = energySource === 'grid' ? EF.electricGrid : energySource === 'partial' ? EF.electricPartial : EF.electricRenewable;
-  const energyCO2 = (electricKwh * electricEF + gasM3 * EF.naturalGas + heatingOil * EF.heatingOil) * homeSize;
+  const electricEF =
+    energySource === 'grid'
+      ? EF.electricGrid
+      : energySource === 'partial'
+        ? EF.electricPartial
+        : EF.electricRenewable;
+  const energyCO2 =
+    (electricKwh * electricEF + gasM3 * EF.naturalGas + heatingOil * EF.heatingOil) * homeSize;
 
   // ── Food
   const beefKg = parseFloat(document.getElementById('beefKg').value) || 0;
@@ -414,17 +607,20 @@ function recalc() {
   const veggieKg = parseFloat(document.getElementById('veggieKg').value) || 0;
   const dietStyle = parseFloat(document.getElementById('dietStyle').value) || 1;
 
-  const foodCO2 = (
-    beefKg * EF.beef +
-    poultryKg * EF.poultry +
-    fishKg * EF.fish +
-    dairyKg * EF.dairy +
-    veggieKg * EF.veggies
-  ) * dietStyle;
+  const foodCO2 =
+    (beefKg * EF.beef +
+      poultryKg * EF.poultry +
+      fishKg * EF.fish +
+      dairyKg * EF.dairy +
+      veggieKg * EF.veggies) *
+    dietStyle;
 
   // ── Waste
   const wasteKg = parseFloat(document.getElementById('wasteKg').value) || 0;
-  const recyclingRate = Math.min(parseFloat(document.getElementById('recyclingRate').value) || 0, 100);
+  const recyclingRate = Math.min(
+    parseFloat(document.getElementById('recyclingRate').value) || 0,
+    100
+  );
   const clothingItems = parseFloat(document.getElementById('clothingItems').value) || 0;
   const onlineShopping = parseFloat(document.getElementById('onlineShopping').value) || 0;
 
@@ -470,7 +666,8 @@ function logActivity() {
   // Streak
   const today = now.toDateString();
   if (state.lastLogDate !== today) {
-    const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
     if (state.lastLogDate === yesterday.toDateString()) {
       state.streak += 1;
     } else {
@@ -503,7 +700,7 @@ function initAnalyticsPage() {
 
 function setAnalyticsPeriod(period, btn) {
   state.analyticsPeriod = period;
-  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-tab').forEach((b) => b.classList.remove('active'));
   btn.classList.add('active');
   initAnalyticsPage();
 }
@@ -514,13 +711,13 @@ function getFilteredLogs() {
   if (state.analyticsPeriod === 'month') cutoff.setMonth(cutoff.getMonth() - 1);
   else if (state.analyticsPeriod === 'quarter') cutoff.setMonth(cutoff.getMonth() - 3);
   else cutoff.setFullYear(cutoff.getFullYear() - 1);
-  return state.logs.filter(l => new Date(l.date) >= cutoff);
+  return state.logs.filter((l) => new Date(l.date) >= cutoff);
 }
 
 function renderTrendChart() {
   const logs = getFilteredLogs();
-  const labels = logs.map(l => formatDate(l.date));
-  const data = logs.map(l => l.total);
+  const labels = logs.map((l) => formatDate(l.date));
+  const data = logs.map((l) => l.total);
 
   const ctx = document.getElementById('trendChart').getContext('2d');
   if (charts.trendChart) charts.trendChart.destroy();
@@ -529,34 +726,46 @@ function renderTrendChart() {
     type: 'line',
     data: {
       labels: labels.length ? labels : ['No data'],
-      datasets: [{
-        label: 'Monthly CO₂ (kg)',
-        data: data.length ? data : [0],
-        borderColor: '#22c55e',
-        backgroundColor: 'rgba(34,197,94,0.08)',
-        borderWidth: 2.5,
-        tension: 0.4,
-        pointBackgroundColor: '#22c55e',
-        pointBorderColor: '#050b10',
-        pointBorderWidth: 2,
-        pointRadius: 5,
-        fill: true,
-      }]
+      datasets: [
+        {
+          label: 'Monthly CO₂ (kg)',
+          data: data.length ? data : [0],
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.08)',
+          borderWidth: 2.5,
+          tension: 0.4,
+          pointBackgroundColor: '#22c55e',
+          pointBorderColor: '#050b10',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          fill: true,
+        },
+      ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.parsed.y.toFixed(1)} kg CO₂e` } } },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { size: 11 }, callback: v => `${v} kg` }, beginAtZero: true },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y.toFixed(1)} kg CO₂e` } },
       },
-    }
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#737373', font: { size: 11 } },
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#737373', font: { size: 11 }, callback: (v) => `${v} kg` },
+          beginAtZero: true,
+        },
+      },
+    },
   });
 
   // Trend indicator
   if (data.length >= 2) {
-    const pct = ((data[data.length-1] - data[0]) / data[0] * 100).toFixed(1);
+    const pct = (((data[data.length - 1] - data[0]) / data[0]) * 100).toFixed(1);
     const el = document.getElementById('trendIndicator');
     el.textContent = pct <= 0 ? `▼ ${Math.abs(pct)}% reduced` : `▲ ${pct}% increased`;
     el.style.background = pct <= 0 ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
@@ -567,7 +776,7 @@ function renderTrendChart() {
 function renderCategoryBarChart() {
   const logs = getFilteredLogs();
   const totals = { Transport: 0, Energy: 0, Food: 0, Waste: 0 };
-  logs.forEach(l => {
+  logs.forEach((l) => {
     totals.Transport += l.transport || 0;
     totals.Energy += l.energy || 0;
     totals.Food += l.food || 0;
@@ -581,13 +790,20 @@ function renderCategoryBarChart() {
     type: 'bar',
     data: {
       labels: Object.keys(totals),
-      datasets: [{
-        data: Object.values(totals),
-        backgroundColor: ['rgba(59,130,246,0.7)','rgba(234,179,8,0.7)','rgba(249,115,22,0.7)','rgba(168,85,247,0.7)'],
-        borderColor: ['#3b82f6','#eab308','#f97316','#a855f7'],
-        borderWidth: 1.5,
-        borderRadius: 6,
-      }]
+      datasets: [
+        {
+          data: Object.values(totals),
+          backgroundColor: [
+            'rgba(59,130,246,0.7)',
+            'rgba(234,179,8,0.7)',
+            'rgba(249,115,22,0.7)',
+            'rgba(168,85,247,0.7)',
+          ],
+          borderColor: ['#3b82f6', '#eab308', '#f97316', '#a855f7'],
+          borderWidth: 1.5,
+          borderRadius: 6,
+        },
+      ],
     },
     options: {
       responsive: true,
@@ -595,16 +811,20 @@ function renderCategoryBarChart() {
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#737373', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { size: 11 }, callback: v => `${v} kg` }, beginAtZero: true },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#737373', font: { size: 11 }, callback: (v) => `${v} kg` },
+          beginAtZero: true,
+        },
       },
-    }
+    },
   });
 }
 
 function renderBreakdownChart() {
   const logs = getFilteredLogs();
   const totals = [0, 0, 0, 0];
-  logs.forEach(l => {
+  logs.forEach((l) => {
     totals[0] += l.transport || 0;
     totals[1] += l.energy || 0;
     totals[2] += l.food || 0;
@@ -618,19 +838,31 @@ function renderBreakdownChart() {
     type: 'polarArea',
     data: {
       labels: ['Transport', 'Energy', 'Food', 'Waste'],
-      datasets: [{
-        data: total > 0 ? totals : [1,1,1,1],
-        backgroundColor: ['rgba(59,130,246,0.5)','rgba(234,179,8,0.5)','rgba(249,115,22,0.5)','rgba(168,85,247,0.5)'],
-        borderColor: ['#3b82f6','#eab308','#f97316','#a855f7'],
-        borderWidth: 1.5,
-      }]
+      datasets: [
+        {
+          data: total > 0 ? totals : [1, 1, 1, 1],
+          backgroundColor: [
+            'rgba(59,130,246,0.5)',
+            'rgba(234,179,8,0.5)',
+            'rgba(249,115,22,0.5)',
+            'rgba(168,85,247,0.5)',
+          ],
+          borderColor: ['#3b82f6', '#eab308', '#f97316', '#a855f7'],
+          borderWidth: 1.5,
+        },
+      ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { color: '#737373', font: { size: 11 }, boxWidth: 12 } } },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#737373', font: { size: 11 }, boxWidth: 12 },
+        },
+      },
       scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false } } },
-    }
+    },
   });
 }
 
@@ -641,10 +873,11 @@ function updateAnalyticsStats() {
   if (logs.length === 0) return;
 
   const best = [...logs].sort((a, b) => a.total - b.total)[0];
-  document.getElementById('bestMonth').textContent = `${best.total.toFixed(0)} kg (${formatDate(best.date)})`;
+  document.getElementById('bestMonth').textContent =
+    `${best.total.toFixed(0)} kg (${formatDate(best.date)})`;
 
   const catTotals = { Transport: 0, Energy: 0, Food: 0, Waste: 0 };
-  logs.forEach(l => {
+  logs.forEach((l) => {
     catTotals.Transport += l.transport || 0;
     catTotals.Energy += l.energy || 0;
     catTotals.Food += l.food || 0;
@@ -656,7 +889,10 @@ function updateAnalyticsStats() {
   const totalActual = logs.reduce((s, l) => s + l.total, 0);
   const totalAvg = 400 * logs.length;
   const saved = totalAvg - totalActual;
-  document.getElementById('totalSaved').textContent = saved > 0 ? `${saved.toFixed(0)} kg below avg 🎉` : `${Math.abs(saved).toFixed(0)} kg above avg`;
+  document.getElementById('totalSaved').textContent =
+    saved > 0
+      ? `${saved.toFixed(0)} kg below avg 🎉`
+      : `${Math.abs(saved).toFixed(0)} kg above avg`;
 }
 
 // ─── Goals ────────────────────────────────────────────────────────────────────
@@ -685,16 +921,17 @@ function saveGoal() {
 
 function updateGoalProgress() {
   const today = getMonthKey();
-  const thisMonthLogs = state.logs.filter(l => l.monthKey === today);
+  const thisMonthLogs = state.logs.filter((l) => l.monthKey === today);
   const monthTotal = thisMonthLogs.reduce((s, l) => s + l.total, 0);
   const pct = state.goal > 0 ? Math.min((monthTotal / state.goal) * 100, 100) : 0;
   document.getElementById('goalProgressBar').style.width = `${pct}%`;
-  document.getElementById('goalProgressText').textContent = `${monthTotal.toFixed(0)} / ${state.goal} kg (${pct.toFixed(0)}%)`;
+  document.getElementById('goalProgressText').textContent =
+    `${monthTotal.toFixed(0)} / ${state.goal} kg (${pct.toFixed(0)}%)`;
 }
 
 function renderChallenges() {
   const el = document.getElementById('challengesGrid');
-  el.innerHTML = CHALLENGES.map(c => {
+  el.innerHTML = CHALLENGES.map((c) => {
     const done = state.completedChallenges.includes(c.id);
     return `<div class="challenge-card ${done ? 'completed' : ''}">
       <div class="challenge-emoji">${c.emoji}</div>
@@ -722,7 +959,7 @@ function completeChallenge(id, points) {
 
 function renderAchievements() {
   const el = document.getElementById('achievementsGrid');
-  el.innerHTML = ACHIEVEMENTS.map(a => {
+  el.innerHTML = ACHIEVEMENTS.map((a) => {
     const unlocked = state.unlockedAchievements.includes(a.id);
     return `<div class="achievement-item ${unlocked ? 'unlocked' : 'locked'}">
       <div class="achievement-icon">${a.emoji}</div>
@@ -731,7 +968,8 @@ function renderAchievements() {
     </div>`;
   }).join('');
   const count = state.unlockedAchievements.length;
-  document.getElementById('achievementCount').textContent = `${count} / ${ACHIEVEMENTS.length} unlocked`;
+  document.getElementById('achievementCount').textContent =
+    `${count} / ${ACHIEVEMENTS.length} unlocked`;
 }
 
 function checkAchievements() {
@@ -743,7 +981,7 @@ function checkAchievements() {
     goal: state.goal,
   };
   let newUnlocks = 0;
-  ACHIEVEMENTS.forEach(a => {
+  ACHIEVEMENTS.forEach((a) => {
     if (!state.unlockedAchievements.includes(a.id) && a.condition(data)) {
       state.unlockedAchievements.push(a.id);
       newUnlocks++;
@@ -755,7 +993,8 @@ function checkAchievements() {
 function renderLevels() {
   const el = document.getElementById('levelsList');
   const currentLevel = getLevel(state.ecoScore);
-  el.innerHTML = ECO_LEVELS.map(l => `
+  el.innerHTML = ECO_LEVELS.map(
+    (l) => `
     <div class="level-item ${l.name === currentLevel.name ? 'current' : ''}">
       <div class="level-emoji">${l.emoji}</div>
       <div class="level-info">
@@ -764,7 +1003,8 @@ function renderLevels() {
       </div>
       ${l.name === currentLevel.name ? '<span class="level-badge active-badge">Current Level</span>' : ''}
     </div>
-  `).join('');
+  `
+  ).join('');
 }
 
 // ─── Learn ────────────────────────────────────────────────────────────────────
@@ -788,16 +1028,21 @@ function renderFactsMarquee() {
   // Double the facts for seamless marquee loop
   const doubled = [...facts, ...facts];
   const el = document.getElementById('factsMarquee');
-  el.innerHTML = doubled.map(f => `
+  el.innerHTML = doubled
+    .map(
+      (f) => `
     <div class="fact-item">
       📊 ${f.label}: <span>${f.val}</span>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 }
 
 function renderLearnCards() {
   const el = document.getElementById('learnGrid');
-  el.innerHTML = LEARN_CARDS.map(c => `
+  el.innerHTML = LEARN_CARDS.map(
+    (c) => `
     <div class="learn-card">
       <div class="learn-card-header">
         <div class="learn-cat-icon" style="background:${c.bgColor}">${c.emoji}</div>
@@ -814,15 +1059,17 @@ function renderLearnCards() {
         </div>
       </div>
       <div class="learn-tips-list">
-        ${c.tips.map(t => `<div class="learn-tip-item">${t}</div>`).join('')}
+        ${c.tips.map((t) => `<div class="learn-tip-item">${t}</div>`).join('')}
       </div>
     </div>
-  `).join('');
+  `
+  ).join('');
 }
 
 function renderQuickWins() {
   const el = document.getElementById('quickWinsList');
-  el.innerHTML = QUICK_WINS.map(w => `
+  el.innerHTML = QUICK_WINS.map(
+    (w) => `
     <div class="quick-win-item">
       <div class="quick-win-emoji">${w.emoji}</div>
       <div class="quick-win-info">
@@ -830,7 +1077,8 @@ function renderQuickWins() {
       </div>
       <div class="quick-win-saving">${w.saving}</div>
     </div>
-  `).join('');
+  `
+  ).join('');
 }
 
 // ─── Sidebar Score Update ──────────────────────────────────────────────────────
@@ -886,7 +1134,9 @@ function seedDemoData() {
       cycleKm: Math.random() * 30,
     });
   }
-  months.forEach(m => { m.total = m.transport + m.energy + m.food + m.waste; });
+  months.forEach((m) => {
+    m.total = m.transport + m.energy + m.food + m.waste;
+  });
   state.logs = months;
   state.ecoScore = 120;
   state.streak = 3;
@@ -912,7 +1162,9 @@ function showAuthError(id, msg) {
   const el = document.getElementById(id);
   el.textContent = msg;
   el.classList.add('show');
-  el.closest('.auth-form').querySelectorAll('input').forEach(i => i.classList.remove('error'));
+  el.closest('.auth-form')
+    .querySelectorAll('input')
+    .forEach((i) => i.classList.remove('error'));
 }
 
 function togglePwd(inputId, btn) {
@@ -934,10 +1186,10 @@ function checkPasswordStrength(val) {
   if (/[^A-Za-z0-9]/.test(val)) score++;
 
   const levels = [
-    { w: '20%',  color: '#ef4444', text: 'Weak' },
-    { w: '40%',  color: '#f97316', text: 'Fair' },
-    { w: '60%',  color: '#eab308', text: 'Good' },
-    { w: '80%',  color: '#22c55e', text: 'Strong' },
+    { w: '20%', color: '#ef4444', text: 'Weak' },
+    { w: '40%', color: '#f97316', text: 'Fair' },
+    { w: '60%', color: '#eab308', text: 'Good' },
+    { w: '80%', color: '#22c55e', text: 'Strong' },
     { w: '100%', color: '#16a34a', text: 'Excellent' },
   ];
   const lvl = levels[Math.min(score - 1, 4)] || levels[0];
@@ -949,14 +1201,16 @@ function checkPasswordStrength(val) {
 
 function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/[&<>'"]/g, 
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag] || tag)
+  return str.replace(
+    /[&<>'"]/g,
+    (tag) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;',
+      })[tag] || tag
   );
 }
 
@@ -964,7 +1218,7 @@ async function hashPassword(password) {
   const msgUint8 = new TextEncoder().encode(password);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 function setButtonLoading(btnId, loading) {
@@ -987,7 +1241,7 @@ async function handleLogin(e) {
   setTimeout(() => {
     setButtonLoading('loginBtn', false);
     const users = JSON.parse(localStorage.getItem('ecotrack_users') || '[]');
-    const user = users.find(u => u.email === email);
+    const user = users.find((u) => u.email === email);
 
     if (!user) {
       showAuthError('loginError', '⚠️ No account found with this email. Please sign up.');
@@ -1004,7 +1258,10 @@ async function handleLogin(e) {
       localStorage.setItem('ecotrack_users', JSON.stringify(users));
     }
 
-    localStorage.setItem('ecotrack_session', JSON.stringify({ email: user.email, name: user.name }));
+    localStorage.setItem(
+      'ecotrack_session',
+      JSON.stringify({ email: user.email, name: user.name })
+    );
     loginSuccess(user);
   }, 900);
 }
@@ -1018,9 +1275,18 @@ async function handleSignup(e) {
 
   document.getElementById('signupError').classList.remove('show');
 
-  if (!first) { showAuthError('signupError', '⚠️ Please enter your first name.'); return; }
-  if (!email) { showAuthError('signupError', '⚠️ Please enter your email.'); return; }
-  if (password.length < 6) { showAuthError('signupError', '⚠️ Password must be at least 6 characters.'); return; }
+  if (!first) {
+    showAuthError('signupError', '⚠️ Please enter your first name.');
+    return;
+  }
+  if (!email) {
+    showAuthError('signupError', '⚠️ Please enter your email.');
+    return;
+  }
+  if (password.length < 6) {
+    showAuthError('signupError', '⚠️ Password must be at least 6 characters.');
+    return;
+  }
 
   setButtonLoading('signupBtn', true);
 
@@ -1030,7 +1296,7 @@ async function handleSignup(e) {
     setButtonLoading('signupBtn', false);
     const users = JSON.parse(localStorage.getItem('ecotrack_users') || '[]');
 
-    if (users.find(u => u.email === email)) {
+    if (users.find((u) => u.email === email)) {
       showAuthError('signupError', '⚠️ An account with this email already exists. Please sign in.');
       return;
     }
@@ -1044,7 +1310,10 @@ async function handleSignup(e) {
     };
     users.push(newUser);
     localStorage.setItem('ecotrack_users', JSON.stringify(users));
-    localStorage.setItem('ecotrack_session', JSON.stringify({ email: newUser.email, name: newUser.name }));
+    localStorage.setItem(
+      'ecotrack_session',
+      JSON.stringify({ email: newUser.email, name: newUser.name })
+    );
 
     loginSuccess(newUser);
   }, 900);
@@ -1089,7 +1358,12 @@ function loginSuccess(user) {
 function updateSidebarUser(name, email) {
   document.getElementById('sidebarUsername').textContent = name || 'Eco User';
   document.getElementById('sidebarEmailDisplay').textContent = email || '';
-  const initials = (name || 'E').split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+  const initials = (name || 'E')
+    .split(' ')
+    .map((p) => p[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
   document.getElementById('sidebarAvatar').textContent = initials;
 }
 
@@ -1111,14 +1385,14 @@ function init() {
 
   // Seed default demo user in localStorage if not exists
   const users = JSON.parse(localStorage.getItem('ecotrack_users') || '[]');
-  const adminUser = users.find(u => u.email === 'admin@ecotrack.com');
+  const adminUser = users.find((u) => u.email === 'admin@ecotrack.com');
   if (!adminUser) {
     users.push({
       email: 'admin@ecotrack.com',
       name: 'Eco Admin',
       password: '240a8e0f98e6c4664fb9fc56cf3a9435b801a93b2a265691c9444cf81896898a', // SHA-256 of admin123
       country: 'US',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     });
     localStorage.setItem('ecotrack_users', JSON.stringify(users));
   } else if (adminUser.password === btoa('admin123')) {
@@ -1163,7 +1437,7 @@ function init() {
 
   // Navigate based on hash
   const hash = window.location.hash.replace('#', '');
-  if (['dashboard','calculator','analytics','goals','learn'].includes(hash)) {
+  if (['dashboard', 'calculator', 'analytics', 'goals', 'learn'].includes(hash)) {
     navigate(hash);
   }
 }
