@@ -1347,23 +1347,6 @@ function handleLogout() {
 function init() {
   loadState();
 
-  // Seed default demo user in localStorage if not exists
-  const users = JSON.parse(localStorage.getItem('ecotrack_users') || '[]');
-  const adminUser = users.find((u) => u.email === 'admin@ecotrack.com');
-  if (!adminUser) {
-    users.push({
-      email: 'admin@ecotrack.com',
-      name: 'Eco Admin',
-      password: '240a8e0f98e6c4664fb9fc56cf3a9435b801a93b2a265691c9444cf81896898a', // SHA-256 of admin123
-      country: 'US',
-      createdAt: new Date().toISOString(),
-    });
-    localStorage.setItem('ecotrack_users', JSON.stringify(users));
-  } else if (adminUser.password === btoa('admin123')) {
-    adminUser.password = '240a8e0f98e6c4664fb9fc56cf3a9435b801a93b2a265691c9444cf81896898a';
-    localStorage.setItem('ecotrack_users', JSON.stringify(users));
-  }
-
   // Init lucide icons
   lucide.createIcons();
 
@@ -1407,9 +1390,7 @@ function init() {
 }
 
 function autoFillDemo() {
-  document.getElementById('loginEmail').value = 'admin@ecotrack.com';
-  document.getElementById('loginPassword').value = 'admin123';
-  showToast('⚡ Demo credentials filled!');
+  showToast('ℹ️ Sign up to create a personalized secure account!');
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────

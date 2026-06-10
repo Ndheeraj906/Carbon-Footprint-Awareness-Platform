@@ -226,3 +226,80 @@ describe('calculateWasteCO2()', () => {
     expect(result).toBeCloseTo(expected);
   });
 });
+
+// ─── Extra Calculation & UI Logic Edge Case Tests ──────────────────────────────
+describe('Edge cases and boundary inputs', () => {
+  test('calculateTransportCO2 with null/undefined values defaults gracefully', () => {
+    // Note: JS allows undefined * number = NaN. Our test checks behavior.
+    expect(isNaN(calculateTransportCO2(undefined, 'petrol', null, undefined, null))).toBe(true);
+  });
+
+  test('calculateTransportCO2 with negative inputs calculates raw value', () => {
+    const val = calculateTransportCO2(-100, 'petrol', -5, -2, -50);
+    expect(val).toBeLessThan(0);
+  });
+
+  test('calculateTransportCO2 unknown fuel type fallback to NaN or error', () => {
+    expect(isNaN(calculateTransportCO2(100, 'invalid-fuel', 0, 0, 0))).toBe(true);
+  });
+
+  test('calculateEnergyCO2 handles negative or null values', () => {
+    expect(isNaN(calculateEnergyCO2(null, 'grid', undefined, -10, -1))).toBe(true);
+  });
+
+  test('calculateEnergyCO2 handles zero size factor multiplier correctly', () => {
+    expect(calculateEnergyCO2(100, 'grid', 20, 10, 0)).toBe(0);
+  });
+
+  test('calculateFoodCO2 handles negative and null inputs', () => {
+    expect(isNaN(calculateFoodCO2(null, -10, undefined, -5, 0, 1))).toBe(true);
+  });
+
+  test('calculateFoodCO2 with negative multiplier scales appropriately', () => {
+    expect(calculateFoodCO2(2, 2, 2, 2, 2, -0.5)).toBeLessThan(0);
+  });
+
+  test('calculateWasteCO2 with negative waste volume or items', () => {
+    const val = calculateWasteCO2(-5, 0, -3, -1);
+    expect(val).toBeLessThan(0);
+  });
+
+  test('calculateWasteCO2 recycling rate greater than 100 calculates percentage ratio', () => {
+    const val = calculateWasteCO2(10, 150, 0, 0);
+    expect(val).toBeCloseTo(10 * 4.33 * EF.wasteGeneral * -0.5);
+  });
+
+  test('calculateWasteCO2 negative recycling rate treats percentage accordingly', () => {
+    const negativeRecycling = calculateWasteCO2(5, -20, 0, 0);
+    expect(negativeRecycling).toBeCloseTo(5 * 4.33 * EF.wasteGeneral * 1.2);
+  });
+
+  test('calculateTransportCO2 very large inputs are calculated without overflow', () => {
+    const largeResult = calculateTransportCO2(1e6, 'petrol', 100, 100, 1e6);
+    expect(largeResult).toBe(1e6 * EF.car.petrol + 100 * EF.shortFlight + 100 * EF.longFlight + 1e6 * EF.transit);
+  });
+
+  test('calculateEnergyCO2 extremely high energy inputs calculation', () => {
+    const largeResult = calculateEnergyCO2(1e6, 'grid', 1e6, 1e6, 3.0);
+    const expected = (1e6 * EF.electricGrid + 1e6 * EF.naturalGas + 1e6 * EF.heatingOil) * 3.0;
+    expect(largeResult).toBeCloseTo(expected);
+  });
+
+  test('calculateFoodCO2 high dietary intake volume calculation', () => {
+    const largeResult = calculateFoodCO2(1000, 1000, 1000, 1000, 1000, 2.0);
+    const expected = (1000 * EF.beef + 1000 * EF.poultry + 1000 * EF.fish + 1000 * EF.dairy + 1000 * EF.veggies) * 2.0;
+    expect(largeResult).toBeCloseTo(expected);
+  });
+
+  test('calculateWasteCO2 very large waste volumes handles correctly', () => {
+    const largeResult = calculateWasteCO2(1000, 50, 1000, 1000);
+    const expected = 1000 * 4.33 * EF.wasteGeneral * 0.5 + 1000 * EF.clothing + 1000 * EF.onlinePackage;
+    expect(largeResult).toBeCloseTo(expected);
+  });
+
+  test('Emission Factor object remains unchanged and matches standards', () => {
+    expect(EF.transit).toBe(0.089);
+    expect(EF.clothing).toBe(12.0);
+    expect(EF.onlinePackage).toBe(0.5);
+  });
+});

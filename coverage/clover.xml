@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1781096094887" clover="3.2.0">
-  <project timestamp="1781096094887" name="All files">
+<coverage generated="1781112643535" clover="3.2.0">
+  <project timestamp="1781112643536" name="All files">
     <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4" elements="14" coveredelements="14" complexity="0" loc="6" ncloc="6" packages="1" files="1" classes="1"/>
     <file name="calculator.js" path="C:\Users\Lenovo\.gemini\antigravity\scratch\Carbon-Footprint-Awareness-Platform\src\calculator.js">
       <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>

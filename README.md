@@ -143,9 +143,9 @@ npm install
 npm run dev     # Starts http-server on port 3000
 ```
 
-**Demo Login:**
-- Email: `admin@ecotrack.com`
-- Password: `admin123`
+> [!NOTE]
+> **Data Persistence & Authentication Note:**
+> This application is built as a highly responsive client-side experience for demonstration purposes. It utilizes local web storage (`localStorage`) to manage user profiles, calculation logs, and streaks entirely in the user's browser without requiring a backend database. In a production system, these flows would connect securely to an identity provider and database backend with HttpOnly session cookies.
 
 ---
 
