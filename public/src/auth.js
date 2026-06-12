@@ -2,6 +2,12 @@
 // Authentication helper for the Carbon Footprint Awareness Platform
 // Uses fetch to call the Express backend for login, signup, and logout.
 
+/** Get the CSRF token from the document cookie for API requests. */
+function getCsrfToken() {
+  const match = document.cookie.match(/(?:^|;) ?csrfToken=([^;]*)(?:;|$)/);
+  return match ? match[1] : '';
+}
+
 /**
  * Perform login with given credentials.
  * On success, the backend sets an HttpOnly cookie and returns user details.
@@ -12,7 +18,10 @@
 export async function login(email, password) {
   const resp = await fetch('/api/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'x-csrf-token': getCsrfToken()
+    },
     credentials: 'include',
     body: JSON.stringify({ email, password })
   });
@@ -37,7 +46,10 @@ export async function signup(first, last, email, password, country) {
   const name = last ? `${first} ${last}` : first;
   const resp = await fetch('/api/signup', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'x-csrf-token': getCsrfToken()
+    },
     credentials: 'include',
     body: JSON.stringify({ email, password, name, country })
   });
@@ -53,7 +65,11 @@ export async function signup(first, last, email, password, country) {
  * Calls backend to clear the session cookie.
  */
 export async function logout() {
-  await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+  await fetch('/api/logout', { 
+    method: 'POST', 
+    headers: { 'x-csrf-token': getCsrfToken() },
+    credentials: 'include' 
+  });
 }
 
 /**
