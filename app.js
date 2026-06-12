@@ -3,14 +3,29 @@ import {
   calculateEnergyCO2,
   calculateFoodCO2,
   calculateWasteCO2,
-  EF,
 } from './src/calculator.js';
+import {
+  state, saveState, loadState, getLevel, getMonthKey, formatDate, debounce, ECO_LEVELS,
+} from './src/state.js';
+import {
+  updateCategoryDonut, renderTrendChart, renderCategoryBarChart, renderBreakdownChart, updateAnalyticsStats,
+} from './src/charts.js';
+import {
+  checkAchievements as _checkAchievements,
+  completeChallenge as _completeChallenge, renderChallenges as _renderChallenges,
+  renderAchievements as _renderAchievements, renderLevels as _renderLevels,
+  updateStreak, calcPoints,
+} from './src/gamification.js';
+import { renderShareButtons, copyShareLink } from './src/share.js';
+import { login, logout, getCurrentUser, signup } from './src/auth.js';
+
 /* =====================================================
    EcoTrack — app.js
-   Core Application Logic
+   Core Application Logic (orchestration layer)
+   Modules: src/state.js | src/charts.js | src/gamification.js | src/share.js | src/calculator.js
    ===================================================== */
 
-('use strict');
+'use strict';
 
 // ─── Emission Factors (kg CO₂e per unit) ─────────────────────────────────────
 
@@ -68,111 +83,7 @@ const ECO_TIPS = [
   },
 ];
 
-// ─── Eco Challenges ───────────────────────────────────────────────────────────
-const CHALLENGES = [
-  {
-    id: 'c1',
-    emoji: '🚶',
-    name: 'Walk This Week',
-    desc: 'Replace at least 3 car trips with walking or cycling this week.',
-    points: 50,
-  },
-  {
-    id: 'c2',
-    emoji: '🥦',
-    name: 'Meatless Monday',
-    desc: 'Skip meat every Monday for a month — plant-based all day.',
-    points: 40,
-  },
-  {
-    id: 'c3',
-    emoji: '💡',
-    name: 'Lights Out',
-    desc: 'Turn off all lights and unplug devices when leaving a room for 7 days.',
-    points: 30,
-  },
-  {
-    id: 'c4',
-    emoji: '🛍️',
-    name: 'Zero New Clothes',
-    desc: 'Go one month without buying new clothing — thrift or borrow instead.',
-    points: 60,
-  },
-  {
-    id: 'c5',
-    emoji: '🚿',
-    name: 'Short Showers',
-    desc: 'Keep all showers under 5 minutes for 2 weeks.',
-    points: 25,
-  },
-  {
-    id: 'c6',
-    emoji: '🌱',
-    name: 'Plant Something',
-    desc: 'Plant a tree, herb garden, or contribute to a reforestation project.',
-    points: 70,
-  },
-];
-
-// ─── Achievements ─────────────────────────────────────────────────────────────
-const ACHIEVEMENTS = [
-  {
-    id: 'a1',
-    emoji: '🌱',
-    name: 'First Log',
-    desc: 'Log your first activity',
-    condition: (d) => d.logs.length >= 1,
-  },
-  {
-    id: 'a2',
-    emoji: '🏆',
-    name: 'Week Warrior',
-    desc: 'Log activity 7 days in a row',
-    condition: (d) => d.streak >= 7,
-  },
-  {
-    id: 'a3',
-    emoji: '🌍',
-    name: 'Below Global Avg',
-    desc: 'Monthly CO₂ below 400 kg',
-    condition: (d) => d.lastMonthCO2 < 400 && d.lastMonthCO2 > 0,
-  },
-  {
-    id: 'a4',
-    emoji: '⚡',
-    name: 'Energy Saver',
-    desc: 'Log energy data 3 times',
-    condition: (d) => d.logs.filter((l) => l.energy > 0).length >= 3,
-  },
-  {
-    id: 'a5',
-    emoji: '🚴',
-    name: 'Cyclist',
-    desc: 'Log 100+ km cycling/walking',
-    condition: (d) => d.logs.reduce((s, l) => s + (l.cycleKm || 0), 0) >= 100,
-  },
-  {
-    id: 'a6',
-    emoji: '🥗',
-    name: 'Plant Powered',
-    desc: 'Log 3 months with food CO₂ under 60 kg',
-    condition: (d) => d.logs.filter((l) => l.food < 60).length >= 3,
-  },
-  {
-    id: 'a7',
-    emoji: '🎯',
-    name: 'Goal Setter',
-    desc: 'Set your first reduction goal',
-    condition: (d) => d.goal > 0,
-  },
-  {
-    id: 'a8',
-    emoji: '🌳',
-    name: 'Forest Guardian',
-    desc: 'Earn 500+ eco points',
-    condition: (d) => d.ecoScore >= 500,
-  },
-];
+// ─── Eco Challenges and Achievements are imported from gamification.js ───
 
 // ─── Learn Content ────────────────────────────────────────────────────────────
 const LEARN_CARDS = [
@@ -253,46 +164,9 @@ const QUICK_WINS = [
   { emoji: '🛍️', title: 'Bring a reusable bag every time', saving: 'Saves ~5 kg CO₂/yr' },
 ];
 
-const ECO_LEVELS = [
-  { emoji: '🌱', name: 'Seedling', minScore: 0, maxScore: 99 },
-  { emoji: '🌿', name: 'Sapling', minScore: 100, maxScore: 249 },
-  { emoji: '🌳', name: 'Tree', minScore: 250, maxScore: 499 },
-  { emoji: '🌲', name: 'Old Growth', minScore: 500, maxScore: 999 },
-  { emoji: '🌍', name: 'Forest Guardian', minScore: 1000, maxScore: Infinity },
-];
-
-// ─── App State ────────────────────────────────────────────────────────────────
-let state = {
-  logs: [],
-  ecoScore: 0,
-  streak: 0,
-  lastLogDate: null,
-  goal: 200,
-  completedChallenges: [],
-  unlockedAchievements: [],
-  tipIndex: 0,
-  currentPage: 'dashboard',
-  analyticsPeriod: 'month',
-};
-
-// ─── Chart Instances ──────────────────────────────────────────────────────────
-let charts = {};
-
-// ─── Utilities ────────────────────────────────────────────────────────────────
-function saveState() {
-  localStorage.setItem('ecotrack_v2', JSON.stringify(state));
-}
-
-function loadState() {
-  const raw = localStorage.getItem('ecotrack_v2');
-  if (raw) {
-    try {
-      state = { ...state, ...JSON.parse(raw) };
-    } catch (e) {
-      console.warn('State parse error, fresh start');
-    }
-  }
-}
+// ─── ECO_LEVELS, state, charts, saveState, loadState ────────────────────────
+// Imported from src/state.js and src/charts.js above.
+// This file is the orchestration layer only.
 
 function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
@@ -303,17 +177,7 @@ function showToast(msg, type = 'success') {
   }, 3500);
 }
 
-function formatDate(d) {
-  return new Date(d).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
-function getMonthKey(date = new Date()) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-}
 
 function animateNumber(el, target, decimals = 1, duration = 700) {
   const start = parseFloat(el.textContent) || 0;
@@ -328,9 +192,7 @@ function animateNumber(el, target, decimals = 1, duration = 700) {
   requestAnimationFrame(step);
 }
 
-function getLevel(score) {
-  return ECO_LEVELS.find((l) => score >= l.minScore && score <= l.maxScore) || ECO_LEVELS[0];
-}
+
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 function navigate(page) {
@@ -415,71 +277,18 @@ function updateDashboard() {
   // Recent activity
   renderRecentActivity();
 
+  // Share panel
+  const shareContainer = document.getElementById('shareContainer');
+  if (shareContainer) {
+    renderShareButtons(shareContainer, {
+      total: monthTotal,
+      month: today,
+      ecoScore: state.ecoScore,
+    });
+  }
+
   // Tip
   renderTip();
-}
-
-function updateCategoryDonut(logs) {
-  const totals = { transport: 0, energy: 0, food: 0, waste: 0 };
-  logs.forEach((l) => {
-    totals.transport += l.transport || 0;
-    totals.energy += l.energy || 0;
-    totals.food += l.food || 0;
-    totals.waste += l.waste || 0;
-  });
-  const total = Object.values(totals).reduce((s, v) => s + v, 0);
-
-  document.getElementById('chartCenterVal').textContent = total.toFixed(0);
-
-  const ctx = document.getElementById('categoryChart').getContext('2d');
-  const data = [totals.transport, totals.energy, totals.food, totals.waste];
-  const colors = ['#3b82f6', '#eab308', '#f97316', '#a855f7'];
-  const labels = ['Transport', 'Energy', 'Food', 'Waste'];
-
-  if (charts.categoryChart) charts.categoryChart.destroy();
-  charts.categoryChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels,
-      datasets: [
-        {
-          data: total === 0 ? [1, 1, 1, 1] : data,
-          backgroundColor:
-            total === 0
-              ? [
-                  'rgba(255,255,255,0.05)',
-                  'rgba(255,255,255,0.05)',
-                  'rgba(255,255,255,0.05)',
-                  'rgba(255,255,255,0.05)',
-                ]
-              : colors,
-          borderColor: 'transparent',
-          borderWidth: 0,
-          hoverOffset: 8,
-        },
-      ],
-    },
-    options: {
-      cutout: '72%',
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } },
-      animation: { duration: 800, easing: 'easeInOutQuart' },
-    },
-  });
-
-  // Legend
-  const legendEl = document.getElementById('donutLegend');
-  legendEl.innerHTML = labels
-    .map(
-      (l, i) => `
-    <div class="legend-item">
-      <div class="legend-dot" style="background:${colors[i]}"></div>
-      <span>${l}</span>
-    </div>
-  `
-    )
-    .join('');
 }
 
 function renderRecentActivity() {
@@ -552,14 +361,14 @@ function switchCategory(cat) {
   document.getElementById(`panel-${cat}`).classList.remove('hidden');
 }
 
-function recalc() {
+/** Raw (non-debounced) recalculation — reads all DOM inputs and updates live UI. */
+function _recalcRaw() {
   // ── Transport
   const carKm = parseFloat(document.getElementById('carKm').value) || 0;
   const carType = document.getElementById('carType').value;
   const shortFlights = parseFloat(document.getElementById('shortFlights').value) || 0;
   const longFlights = parseFloat(document.getElementById('longFlights').value) || 0;
   const transitKm = parseFloat(document.getElementById('transitKm').value) || 0;
-  const cycleKm = parseFloat(document.getElementById('cycleKm').value) || 0;
 
   const transportCO2 = calculateTransportCO2(carKm, carType, shortFlights, longFlights, transitKm);
 
@@ -609,6 +418,12 @@ function recalc() {
   document.getElementById('sum-waste').textContent = wasteCO2.toFixed(1);
 }
 
+/**
+ * Debounced recalc — fires at most once every 150 ms to prevent jank on slow devices.
+ * All HTML oninput/onchange handlers should call this instead of _recalcRaw.
+ */
+const recalc = debounce(_recalcRaw, 150);
+
 function logActivity() {
   const total = Object.values(calcValues).reduce((s, v) => s + v, 0);
   if (total === 0) {
@@ -627,23 +442,11 @@ function logActivity() {
 
   state.logs.push(log);
 
-  // Streak
-  const today = now.toDateString();
-  if (state.lastLogDate !== today) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    if (state.lastLogDate === yesterday.toDateString()) {
-      state.streak += 1;
-    } else {
-      state.streak = 1;
-    }
-    state.lastLogDate = today;
-  }
+  // Update streak via gamification module
+  updateStreak(now);
 
-  // Eco score
-  const basePoints = 20;
-  const bonusLow = total < 200 ? 30 : total < 400 ? 15 : 0;
-  const points = basePoints + bonusLow;
+  // Eco score via gamification module
+  const points = calcPoints(total);
   state.ecoScore += points;
 
   // Check achievements
@@ -667,196 +470,6 @@ function setAnalyticsPeriod(period, btn) {
   document.querySelectorAll('.filter-tab').forEach((b) => b.classList.remove('active'));
   btn.classList.add('active');
   initAnalyticsPage();
-}
-
-function getFilteredLogs() {
-  const now = new Date();
-  let cutoff = new Date(now);
-  if (state.analyticsPeriod === 'month') cutoff.setMonth(cutoff.getMonth() - 1);
-  else if (state.analyticsPeriod === 'quarter') cutoff.setMonth(cutoff.getMonth() - 3);
-  else cutoff.setFullYear(cutoff.getFullYear() - 1);
-  return state.logs.filter((l) => new Date(l.date) >= cutoff);
-}
-
-function renderTrendChart() {
-  const logs = getFilteredLogs();
-  const labels = logs.map((l) => formatDate(l.date));
-  const data = logs.map((l) => l.total);
-
-  const ctx = document.getElementById('trendChart').getContext('2d');
-  if (charts.trendChart) charts.trendChart.destroy();
-
-  charts.trendChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels.length ? labels : ['No data'],
-      datasets: [
-        {
-          label: 'Monthly CO₂ (kg)',
-          data: data.length ? data : [0],
-          borderColor: '#22c55e',
-          backgroundColor: 'rgba(34,197,94,0.08)',
-          borderWidth: 2.5,
-          tension: 0.4,
-          pointBackgroundColor: '#22c55e',
-          pointBorderColor: '#050b10',
-          pointBorderWidth: 2,
-          pointRadius: 5,
-          fill: true,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y.toFixed(1)} kg CO₂e` } },
-      },
-      scales: {
-        x: {
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#737373', font: { size: 11 } },
-        },
-        y: {
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#737373', font: { size: 11 }, callback: (v) => `${v} kg` },
-          beginAtZero: true,
-        },
-      },
-    },
-  });
-
-  // Trend indicator
-  if (data.length >= 2) {
-    const pct = (((data[data.length - 1] - data[0]) / data[0]) * 100).toFixed(1);
-    const el = document.getElementById('trendIndicator');
-    el.textContent = pct <= 0 ? `▼ ${Math.abs(pct)}% reduced` : `▲ ${pct}% increased`;
-    el.style.background = pct <= 0 ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
-    el.style.color = pct <= 0 ? '#4ade80' : '#ef4444';
-  }
-}
-
-function renderCategoryBarChart() {
-  const logs = getFilteredLogs();
-  const totals = { Transport: 0, Energy: 0, Food: 0, Waste: 0 };
-  logs.forEach((l) => {
-    totals.Transport += l.transport || 0;
-    totals.Energy += l.energy || 0;
-    totals.Food += l.food || 0;
-    totals.Waste += l.waste || 0;
-  });
-
-  const ctx = document.getElementById('categoryBarChart').getContext('2d');
-  if (charts.categoryBarChart) charts.categoryBarChart.destroy();
-
-  charts.categoryBarChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: Object.keys(totals),
-      datasets: [
-        {
-          data: Object.values(totals),
-          backgroundColor: [
-            'rgba(59,130,246,0.7)',
-            'rgba(234,179,8,0.7)',
-            'rgba(249,115,22,0.7)',
-            'rgba(168,85,247,0.7)',
-          ],
-          borderColor: ['#3b82f6', '#eab308', '#f97316', '#a855f7'],
-          borderWidth: 1.5,
-          borderRadius: 6,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: '#737373', font: { size: 11 } } },
-        y: {
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#737373', font: { size: 11 }, callback: (v) => `${v} kg` },
-          beginAtZero: true,
-        },
-      },
-    },
-  });
-}
-
-function renderBreakdownChart() {
-  const logs = getFilteredLogs();
-  const totals = [0, 0, 0, 0];
-  logs.forEach((l) => {
-    totals[0] += l.transport || 0;
-    totals[1] += l.energy || 0;
-    totals[2] += l.food || 0;
-    totals[3] += l.waste || 0;
-  });
-  const total = totals.reduce((s, v) => s + v, 0);
-  const ctx = document.getElementById('breakdownChart').getContext('2d');
-  if (charts.breakdownChart) charts.breakdownChart.destroy();
-
-  charts.breakdownChart = new Chart(ctx, {
-    type: 'polarArea',
-    data: {
-      labels: ['Transport', 'Energy', 'Food', 'Waste'],
-      datasets: [
-        {
-          data: total > 0 ? totals : [1, 1, 1, 1],
-          backgroundColor: [
-            'rgba(59,130,246,0.5)',
-            'rgba(234,179,8,0.5)',
-            'rgba(249,115,22,0.5)',
-            'rgba(168,85,247,0.5)',
-          ],
-          borderColor: ['#3b82f6', '#eab308', '#f97316', '#a855f7'],
-          borderWidth: 1.5,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { color: '#737373', font: { size: 11 }, boxWidth: 12 },
-        },
-      },
-      scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false } } },
-    },
-  });
-}
-
-function updateAnalyticsStats() {
-  const logs = getFilteredLogs();
-  document.getElementById('logsCount').textContent = state.logs.length;
-
-  if (logs.length === 0) return;
-
-  const best = [...logs].sort((a, b) => a.total - b.total)[0];
-  document.getElementById('bestMonth').textContent =
-    `${best.total.toFixed(0)} kg (${formatDate(best.date)})`;
-
-  const catTotals = { Transport: 0, Energy: 0, Food: 0, Waste: 0 };
-  logs.forEach((l) => {
-    catTotals.Transport += l.transport || 0;
-    catTotals.Energy += l.energy || 0;
-    catTotals.Food += l.food || 0;
-    catTotals.Waste += l.waste || 0;
-  });
-  const bigCat = Object.entries(catTotals).sort((a, b) => b[1] - a[1])[0];
-  document.getElementById('biggestCat').textContent = `${bigCat[0]} (${bigCat[1].toFixed(0)} kg)`;
-
-  const totalActual = logs.reduce((s, l) => s + l.total, 0);
-  const totalAvg = 400 * logs.length;
-  const saved = totalAvg - totalActual;
-  document.getElementById('totalSaved').textContent =
-    saved > 0
-      ? `${saved.toFixed(0)} kg below avg 🎉`
-      : `${Math.abs(saved).toFixed(0)} kg above avg`;
 }
 
 // ─── Goals ────────────────────────────────────────────────────────────────────
@@ -893,82 +506,34 @@ function updateGoalProgress() {
     `${monthTotal.toFixed(0)} / ${state.goal} kg (${pct.toFixed(0)}%)`;
 }
 
+// ─── Gamification wrappers ────────────────────────────────────────────────────
+// These thin wrappers delegate to src/gamification.js and pass app-level helpers.
+
 function renderChallenges() {
-  const el = document.getElementById('challengesGrid');
-  el.innerHTML = CHALLENGES.map((c) => {
-    const done = state.completedChallenges.includes(c.id);
-    return `<div class="challenge-card ${done ? 'completed' : ''}">
-      <div class="challenge-emoji">${c.emoji}</div>
-      <div class="challenge-name">${c.name}</div>
-      <div class="challenge-desc">${c.desc}</div>
-      <div class="challenge-points">+${c.points} eco points</div>
-      <button class="challenge-complete-btn ${done ? 'done' : ''}" onclick="${done ? '' : `completeChallenge('${c.id}', ${c.points})`}" ${done ? 'disabled' : ''}>
-        ${done ? '✅ Completed!' : '✓ Mark Complete'}
-      </button>
-    </div>`;
-  }).join('');
+  _renderChallenges(document.getElementById('challengesGrid'));
 }
 
 function completeChallenge(id, points) {
-  if (state.completedChallenges.includes(id)) return;
-  state.completedChallenges.push(id);
-  state.ecoScore += points;
-  checkAchievements();
-  saveState();
-  showToast(`🎉 Challenge complete! +${points} eco points`);
-  renderChallenges();
-  renderAchievements();
-  updateSidebarScore();
-}
-
-function renderAchievements() {
-  const el = document.getElementById('achievementsGrid');
-  el.innerHTML = ACHIEVEMENTS.map((a) => {
-    const unlocked = state.unlockedAchievements.includes(a.id);
-    return `<div class="achievement-item ${unlocked ? 'unlocked' : 'locked'}">
-      <div class="achievement-icon">${a.emoji}</div>
-      <div class="achievement-name">${a.name}</div>
-      <div class="achievement-desc">${a.desc}</div>
-    </div>`;
-  }).join('');
-  const count = state.unlockedAchievements.length;
-  document.getElementById('achievementCount').textContent =
-    `${count} / ${ACHIEVEMENTS.length} unlocked`;
-}
-
-function checkAchievements() {
-  const data = {
-    logs: state.logs,
-    streak: state.streak,
-    lastMonthCO2: state.logs.slice(-1)[0]?.total || 0,
-    ecoScore: state.ecoScore,
-    goal: state.goal,
-  };
-  let newUnlocks = 0;
-  ACHIEVEMENTS.forEach((a) => {
-    if (!state.unlockedAchievements.includes(a.id) && a.condition(data)) {
-      state.unlockedAchievements.push(a.id);
-      newUnlocks++;
-      setTimeout(() => showToast(`🏆 Achievement unlocked: ${a.name}!`), 500 * newUnlocks);
-    }
+  _completeChallenge(id, points, showToast, () => {
+    renderChallenges();
+    renderAchievements();
+    updateSidebarScore();
   });
 }
 
+function renderAchievements() {
+  _renderAchievements(
+    document.getElementById('achievementsGrid'),
+    document.getElementById('achievementCount')
+  );
+}
+
+function checkAchievements() {
+  _checkAchievements(showToast);
+}
+
 function renderLevels() {
-  const el = document.getElementById('levelsList');
-  const currentLevel = getLevel(state.ecoScore);
-  el.innerHTML = ECO_LEVELS.map(
-    (l) => `
-    <div class="level-item ${l.name === currentLevel.name ? 'current' : ''}">
-      <div class="level-emoji">${l.emoji}</div>
-      <div class="level-info">
-        <div class="level-name">${l.name}</div>
-        <div class="level-req">${l.minScore === 0 ? 'Starting level' : `${l.minScore}+ eco points`}</div>
-      </div>
-      ${l.name === currentLevel.name ? '<span class="level-badge active-badge">Current Level</span>' : ''}
-    </div>
-  `
-  ).join('');
+  _renderLevels(document.getElementById('levelsList'), ECO_LEVELS);
 }
 
 // ─── Learn ────────────────────────────────────────────────────────────────────
@@ -1163,33 +728,6 @@ function checkPasswordStrength(val) {
   label.style.color = lvl.color;
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(
-    /[&<>'"]/g,
-    (tag) =>
-      ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        "'": '&#39;',
-        '"': '&quot;',
-      })[tag] || tag
-  );
-}
-
-async function hashPassword(password) {
-  const msgUint8 = new TextEncoder().encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-function setButtonLoading(btnId, loading) {
-  const btn = document.getElementById(btnId);
-  if (loading) btn.classList.add('loading');
-  else btn.classList.remove('loading');
-}
 
 async function handleLogin(e) {
   e.preventDefault();
@@ -1199,35 +737,15 @@ async function handleLogin(e) {
   document.getElementById('loginError').classList.remove('show');
   setButtonLoading('loginBtn', true);
 
-  const hashedPassword = await hashPassword(password);
-
-  // Simulate async auth (localStorage-based)
-  setTimeout(() => {
+  try {
+    const user = await login(email, password);
     setButtonLoading('loginBtn', false);
-    const users = JSON.parse(localStorage.getItem('ecotrack_users') || '[]');
-    const user = users.find((u) => u.email === email);
-
-    if (!user) {
-      showAuthError('loginError', '⚠️ No account found with this email. Please sign up.');
-      return;
-    }
-    const matches = user.password === hashedPassword || user.password === btoa(password);
-    if (!matches) {
-      showAuthError('loginError', '⚠️ Incorrect password. Please try again.');
-      return;
-    }
-
-    if (user.password === btoa(password)) {
-      user.password = hashedPassword;
-      localStorage.setItem('ecotrack_users', JSON.stringify(users));
-    }
-
-    localStorage.setItem(
-      'ecotrack_session',
-      JSON.stringify({ email: user.email, name: user.name })
-    );
+    localStorage.setItem('ecotrack_session', JSON.stringify(user));
     loginSuccess(user);
-  }, 900);
+  } catch (err) {
+    setButtonLoading('loginBtn', false);
+    showAuthError('loginError', `⚠️ ${err.message}`);
+  }
 }
 
 async function handleSignup(e) {
@@ -1236,6 +754,7 @@ async function handleSignup(e) {
   const last = document.getElementById('signupLast').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
+  const country = document.getElementById('signupCountry').value;
 
   document.getElementById('signupError').classList.remove('show');
 
@@ -1254,37 +773,18 @@ async function handleSignup(e) {
 
   setButtonLoading('signupBtn', true);
 
-  const hashedPassword = await hashPassword(password);
-
-  setTimeout(() => {
+  try {
+    const user = await signup(first, last, email, password, country);
     setButtonLoading('signupBtn', false);
-    const users = JSON.parse(localStorage.getItem('ecotrack_users') || '[]');
-
-    if (users.find((u) => u.email === email)) {
-      showAuthError('signupError', '⚠️ An account with this email already exists. Please sign in.');
-      return;
-    }
-
-    const newUser = {
-      email: escapeHtml(email),
-      name: last ? `${escapeHtml(first)} ${escapeHtml(last)}` : escapeHtml(first),
-      password: hashedPassword,
-      country: document.getElementById('signupCountry').value,
-      createdAt: new Date().toISOString(),
-    };
-    users.push(newUser);
-    localStorage.setItem('ecotrack_users', JSON.stringify(users));
-    localStorage.setItem(
-      'ecotrack_session',
-      JSON.stringify({ email: newUser.email, name: newUser.name })
-    );
-
-    loginSuccess(newUser);
-  }, 900);
+    localStorage.setItem('ecotrack_session', JSON.stringify(user));
+    loginSuccess(user);
+  } catch (err) {
+    setButtonLoading('signupBtn', false);
+    showAuthError('signupError', `⚠️ ${err.message}`);
+  }
 }
 
 function handleSocialLogin(provider) {
-  // Demo: create a guest account for social login
   const name = `${provider} User`;
   const email = `${provider.toLowerCase()}@ecotrack.demo`;
   const session = { email, name };
@@ -1303,19 +803,11 @@ function handleForgot() {
 }
 
 function loginSuccess(user) {
-  // Hide auth overlay
   document.getElementById('authOverlay').classList.add('hidden');
-
-  // Update sidebar user display
   updateSidebarUser(user.name, user.email);
-
-  // Mark onboarding done
   localStorage.setItem('ecotrack_onboarded', '1');
-
-  // Remove old onboarding modal (not needed with new auth)
   const modal = document.getElementById('onboardingModal');
   if (modal) modal.classList.add('hidden');
-
   showToast(`👋 Welcome back, ${user.name.split(' ')[0]}!`);
 }
 
@@ -1331,50 +823,43 @@ function updateSidebarUser(name, email) {
   document.getElementById('sidebarAvatar').textContent = initials;
 }
 
-function handleLogout() {
+async function handleLogout() {
+  try {
+    await logout();
+  } catch (err) {
+    console.error('Logout error:', err);
+  }
   localStorage.removeItem('ecotrack_session');
-  // Show auth overlay
   document.getElementById('authOverlay').classList.remove('hidden');
-  // Switch to login tab
   switchAuthTab('login');
-  // Clear login form
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
   showToast('👋 Signed out. See you soon!');
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
-function init() {
+async function init() {
   loadState();
-
-  // Init lucide icons
   lucide.createIcons();
 
-  // Check auth session
-  const session = JSON.parse(localStorage.getItem('ecotrack_session') || 'null');
-  if (session) {
-    // Already logged in — hide auth screen
-    document.getElementById('authOverlay').classList.add('hidden');
-    updateSidebarUser(session.name, session.email);
-  } else {
-    // Show auth screen
+  try {
+    const session = await getCurrentUser();
+    if (session) {
+      document.getElementById('authOverlay').classList.add('hidden');
+      updateSidebarUser(session.name, session.email);
+    } else {
+      document.getElementById('authOverlay').classList.remove('hidden');
+    }
+  } catch {
     document.getElementById('authOverlay').classList.remove('hidden');
   }
 
-  // Hide old onboarding modal always (replaced by auth)
   const modal = document.getElementById('onboardingModal');
   if (modal) modal.classList.add('hidden');
 
-  // Seed demo data for fresh installs
   seedDemoData();
-
-  // Particles
   spawnParticles();
-
-  // Load dashboard
   updateDashboard();
 
-  // Auto-rotate tips
   setInterval(() => {
     if (state.currentPage === 'dashboard') {
       state.tipIndex = (state.tipIndex + 1) % ECO_TIPS.length;
@@ -1382,7 +867,6 @@ function init() {
     }
   }, 8000);
 
-  // Navigate based on hash
   const hash = window.location.hash.replace('#', '');
   if (['dashboard', 'calculator', 'analytics', 'goals', 'learn'].includes(hash)) {
     navigate(hash);
@@ -1421,3 +905,4 @@ window.handleSocialLogin = handleSocialLogin;
 window.handleForgot = handleForgot;
 window.handleLogout = handleLogout;
 window.autoFillDemo = autoFillDemo;
+window.copyShareLink = copyShareLink;

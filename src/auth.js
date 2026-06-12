@@ -1,26 +1,51 @@
 // src/auth.js
 // Authentication helper for the Carbon Footprint Awareness Platform
-// Uses fetch to call the Express backend for login and logout.
+// Uses fetch to call the Express backend for login, signup, and logout.
 
 /**
  * Perform login with given credentials.
- * On success, the backend sets an HttpOnly cookie; we just resolve.
+ * On success, the backend sets an HttpOnly cookie and returns user details.
  * @param {string} email
  * @param {string} password
- * @returns {Promise<void>}
+ * @returns {Promise<{ email: string, name: string }>}
  */
 export async function login(email, password) {
   const resp = await fetch('/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // include HttpOnly cookie
+    credentials: 'include',
     body: JSON.stringify({ email, password })
   });
   if (!resp.ok) {
     const data = await resp.json();
     throw new Error(data.message || 'Login failed');
   }
-  // Login success – cookie set by server
+  return await resp.json();
+}
+
+/**
+ * Register a new user account.
+ * On success, sets session cookie and returns user details.
+ * @param {string} first
+ * @param {string} last
+ * @param {string} email
+ * @param {string} password
+ * @param {string} country
+ * @returns {Promise<{ email: string, name: string }>}
+ */
+export async function signup(first, last, email, password, country) {
+  const name = last ? `${first} ${last}` : first;
+  const resp = await fetch('/api/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email, password, name, country })
+  });
+  if (!resp.ok) {
+    const data = await resp.json();
+    throw new Error(data.message || 'Signup failed');
+  }
+  return await resp.json();
 }
 
 /**
@@ -33,12 +58,11 @@ export async function logout() {
 
 /**
  * Checks whether a user is currently authenticated.
- * The server exposes a simple endpoint that returns the current user email if logged in.
- * @returns {Promise<string|null>} email or null
+ * Returns the user details if logged in.
+ * @returns {Promise<{ email: string, name: string }|null>} user or null
  */
 export async function getCurrentUser() {
   const resp = await fetch('/api/me', { credentials: 'include' });
   if (!resp.ok) return null;
-  const { email } = await resp.json();
-  return email;
+  return await resp.json();
 }

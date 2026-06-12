@@ -11,10 +11,10 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cookie-parser": "^1.4.6",
     "bcrypt": "^5.1.0",
     "chart.js": "^4.4.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
     "lucide": "latest"
   },
   "devDependencies": {
