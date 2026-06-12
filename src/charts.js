@@ -4,7 +4,7 @@
  * Manages all Chart.js instances and aria-accessible canvas wrappers.
  */
 
-import { state, getMonthKey, formatDate } from './state.js';
+import { state, formatDate } from './state.js';
 
 /** Shared chart instance registry — destroyed and recreated on each render. */
 export const charts = {};

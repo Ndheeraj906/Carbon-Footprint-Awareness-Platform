@@ -5,7 +5,7 @@ import { jest } from '@jest/globals';
 import { renderShareButtons } from './share.js';
 import { renderChallenges, renderAchievements, renderLevels } from './gamification.js';
 import { updateAnalyticsStats } from './charts.js';
-import { state, ECO_LEVELS } from './state.js';
+import { state } from './state.js';
 
 describe('UI Interaction and Rendering Tests', () => {
   beforeEach(() => {

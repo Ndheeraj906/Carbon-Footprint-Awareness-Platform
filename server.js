@@ -168,7 +168,7 @@ app.get('/share', (req, res) => {
     try {
       const decoded = Buffer.from(dataParam, 'base64').toString('utf-8');
       payload = JSON.parse(decoded);
-    } catch (e) {
+    } catch {
       console.warn('Share parameter parsing failed');
     }
   }

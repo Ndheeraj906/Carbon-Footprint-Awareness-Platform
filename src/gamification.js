@@ -106,7 +106,7 @@ export function completeChallenge(id, points, showToast, onComplete) {
  * @param {HTMLElement} el
  * @param {Function} completeChallengeHandler - window-exposed handler
  */
-export function renderChallenges(el, completeChallengeHandler) {
+export function renderChallenges(el) {
   el.innerHTML = CHALLENGES.map((c) => {
     const done = state.completedChallenges.includes(c.id);
     return `<div class="challenge-card ${done ? 'completed' : ''}">
