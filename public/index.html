@@ -81,7 +81,7 @@
               aria-label="Login Tab"
               class="auth-tab active"
               id="tabLogin"
-              onclick="switchAuthTab('login')"
+              id="authTabLogin"
             >
               Sign In
             </button>
@@ -89,14 +89,14 @@
               aria-label="Signup Tab"
               class="auth-tab"
               id="tabSignup"
-              onclick="switchAuthTab('signup')"
+              id="authTabSignup"
             >
               Sign Up
             </button>
           </div>
 
           <!-- Login Form -->
-          <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+          <form class="auth-form" id="loginForm" >
             <div class="auth-welcome">
               <div class="auth-welcome-icon">👋</div>
               <h3>Welcome back!</h3>
@@ -127,7 +127,7 @@
                 <button
                   type="button"
                   class="pwd-toggle"
-                  onclick="togglePwd('loginPassword', this)"
+                  id="toggleLoginPwd"
                   aria-label="Toggle password visibility"
                 >
                   <i aria-hidden="true" data-lucide="eye"></i>
@@ -140,7 +140,7 @@
                 <span class="checkmark"></span>
                 Remember me
               </label>
-              <button type="button" class="auth-forgot" onclick="handleForgot()">
+              <button type="button" class="auth-forgot" id="authForgot">
                 Forgot password?
               </button>
             </div>
@@ -193,7 +193,7 @@
           </form>
 
           <!-- Signup Form -->
-          <form class="auth-form hidden" id="signupForm" onsubmit="handleSignup(event)">
+          <form class="auth-form hidden" id="signupForm" >
             <div class="auth-welcome">
               <div class="auth-welcome-icon">🌱</div>
               <h3>Create your account</h3>
@@ -226,12 +226,12 @@
                   placeholder="Min. 6 characters"
                   required
                   minlength="6"
-                  oninput="checkPasswordStrength(this.value)"
+                  
                 />
                 <button
                   type="button"
                   class="pwd-toggle"
-                  onclick="togglePwd('signupPassword', this)"
+                  id="toggleSignupPwd"
                   aria-label="Toggle password visibility"
                 >
                   <i aria-hidden="true" data-lucide="eye"></i>
@@ -259,8 +259,8 @@
               <label class="checkbox-label">
                 <input type="checkbox" id="agreeTerms" required />
                 <span class="checkmark"></span>
-                I agree to the <a href="#" onclick="return false;">Terms</a> &amp;
-                <a href="#" onclick="return false;">Privacy Policy</a>
+                I agree to the <a href="#" >Terms</a> &amp;
+                <a href="#" >Privacy Policy</a>
               </label>
             </div>
             <div class="auth-error" id="signupError"></div>
@@ -290,7 +290,7 @@
             href="#dashboard"
             class="nav-link active"
             id="nav-dashboard"
-            onclick="navigate('dashboard')"
+            
           >
             <i aria-hidden="true" data-lucide="layout-dashboard"></i><span>Dashboard</span>
           </a>
@@ -300,23 +300,23 @@
             href="#calculator"
             class="nav-link"
             id="nav-calculator"
-            onclick="navigate('calculator')"
+            
           >
             <i aria-hidden="true" data-lucide="calculator"></i><span>Log Activity</span>
           </a>
         </li>
         <li>
-          <a href="#analytics" class="nav-link" id="nav-analytics" onclick="navigate('analytics')">
+          <a href="#analytics" class="nav-link" id="nav-analytics" >
             <i aria-hidden="true" data-lucide="bar-chart-2"></i><span>Analytics</span>
           </a>
         </li>
         <li>
-          <a href="#goals" class="nav-link" id="nav-goals" onclick="navigate('goals')">
+          <a href="#goals" class="nav-link" id="nav-goals" >
             <i aria-hidden="true" data-lucide="target"></i><span>Goals</span>
           </a>
         </li>
         <li>
-          <a href="#learn" class="nav-link" id="nav-learn" onclick="navigate('learn')">
+          <a href="#learn" class="nav-link" id="nav-learn" >
             <i aria-hidden="true" data-lucide="book-open"></i><span>Learn</span>
           </a>
         </li>
@@ -339,7 +339,7 @@
           <span class="score-label">Eco Score</span>
           <span class="score-value" id="sidebarScore">0</span>
         </div>
-        <button class="btn-logout" onclick="handleLogout()">
+        <button id="btn-nav-logout" class="btn-logout" aria-label="Log Out">
           <i aria-hidden="true" data-lucide="log-out"></i> Sign Out
         </button>
       </div>
@@ -382,7 +382,7 @@
           <div class="stat-card glow-green">
             <div class="stat-icon green"><i aria-hidden="true" data-lucide="wind"></i></div>
             <div class="stat-info">
-              <span class="stat-label">Today's CO₂</span>
+              <span class="stat-label">Monthly CO₂</span>
               <span class="stat-value" id="todayCO2">0.0</span>
               <span class="stat-unit">kg CO₂e</span>
             </div>
@@ -438,7 +438,7 @@
           <div class="glass-card tip-card">
             <div class="card-header">
               <h3><i aria-hidden="true" data-lucide="lightbulb"></i> Daily Eco Tip</h3>
-              <button class="btn-icon" onclick="nextTip()" title="Next tip">
+              <button id="btn-next-tip" class="btn-icon" aria-label="Next tip" title="Next tip">
                 <i aria-hidden="true" data-lucide="refresh-cw"></i>
               </button>
             </div>
@@ -489,7 +489,7 @@
         <div class="glass-card">
           <div class="card-header">
             <h3><i aria-hidden="true" data-lucide="activity"></i> Recent Activity</h3>
-            <button aria-label="Navigate" class="btn-text" onclick="navigate('calculator')">
+            <button aria-label="Navigate" class="btn-text" >
               + Add Entry
             </button>
           </div>
@@ -497,7 +497,7 @@
             <div class="empty-state">
               <i aria-hidden="true" data-lucide="leaf"></i>
               <p>No activity logged yet. Start tracking!</p>
-              <button class="btn-primary" onclick="navigate('calculator')">
+              <button id="btn-hero-calc" class="btn-primary" aria-label="Start Tracking">
                 Log First Activity
               </button>
             </div>
@@ -574,12 +574,12 @@
               <div class="input-group">
                 <label for="carKm">🚗 Car Travel Distance</label>
                 <div class="input-row">
-                  <input type="number" id="carKm" placeholder="0" min="0" oninput="recalc()" />
+                  <input type="number" id="carKm" placeholder="0" min="0"  / aria-label="Input for carKm">
                   <span class="input-unit">km</span>
                 </div>
                 <div class="input-sub">
                   <label for="carType">Fuel Type</label>
-                  <select id="carType" onchange="recalc()">
+                  <select id="carType"  aria-label="Input for carType">
                     <option value="petrol">Petrol/Gasoline</option>
                     <option value="diesel">Diesel</option>
                     <option value="hybrid">Hybrid</option>
@@ -595,7 +595,7 @@
                     id="shortFlights"
                     placeholder="0"
                     min="0"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">flights</span>
                 </div>
@@ -609,7 +609,7 @@
                     id="longFlights"
                     placeholder="0"
                     min="0"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">flights</span>
                 </div>
@@ -618,14 +618,14 @@
               <div class="input-group">
                 <label for="transitKm">🚌 Public Transit</label>
                 <div class="input-row">
-                  <input type="number" id="transitKm" placeholder="0" min="0" oninput="recalc()" />
+                  <input type="number" id="transitKm" placeholder="0" min="0"  / aria-label="Input for transitKm">
                   <span class="input-unit">km/month</span>
                 </div>
               </div>
               <div class="input-group">
                 <label for="cycleKm">🚲 Cycling / Walking</label>
                 <div class="input-row">
-                  <input type="number" id="cycleKm" placeholder="0" min="0" oninput="recalc()" />
+                  <input type="number" id="cycleKm" placeholder="0" min="0"  / aria-label="Input for cycleKm">
                   <span class="input-unit">km/month</span>
                 </div>
                 <div class="badge-positive">Zero emissions! 🌿</div>
@@ -653,13 +653,13 @@
                     id="electricKwh"
                     placeholder="0"
                     min="0"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">kWh/month</span>
                 </div>
                 <div class="input-sub">
                   <label for="energySource">Energy Source</label>
-                  <select id="energySource" onchange="recalc()">
+                  <select id="energySource"  aria-label="Input for energySource">
                     <option value="grid">Standard Grid</option>
                     <option value="renewable">Renewable (Solar/Wind)</option>
                     <option value="partial">Partial Renewable</option>
@@ -669,21 +669,21 @@
               <div class="input-group">
                 <label for="gasM3">🔥 Natural Gas</label>
                 <div class="input-row">
-                  <input type="number" id="gasM3" placeholder="0" min="0" oninput="recalc()" />
+                  <input type="number" id="gasM3" placeholder="0" min="0"  / aria-label="Input for gasM3">
                   <span class="input-unit">m³/month</span>
                 </div>
               </div>
               <div class="input-group">
                 <label for="heatingOil">🛢️ Heating Oil</label>
                 <div class="input-row">
-                  <input type="number" id="heatingOil" placeholder="0" min="0" oninput="recalc()" />
+                  <input type="number" id="heatingOil" placeholder="0" min="0"  / aria-label="Input for heatingOil">
                   <span class="input-unit">liters/month</span>
                 </div>
               </div>
               <div class="input-group">
                 <label for="homeSize">🏠 Home Size</label>
                 <div class="input-row">
-                  <select id="homeSize" onchange="recalc()">
+                  <select id="homeSize"  aria-label="Input for homeSize">
                     <option value="1">Small apartment (&lt;50m²)</option>
                     <option value="1.2" selected>Medium flat (50–100m²)</option>
                     <option value="1.5">Large house (100–200m²)</option>
@@ -717,7 +717,7 @@
                     placeholder="0"
                     min="0"
                     step="0.1"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">kg/month</span>
                 </div>
@@ -731,7 +731,7 @@
                     placeholder="0"
                     min="0"
                     step="0.1"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">kg/month</span>
                 </div>
@@ -745,7 +745,7 @@
                     placeholder="0"
                     min="0"
                     step="0.1"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">kg/month</span>
                 </div>
@@ -759,7 +759,7 @@
                     placeholder="0"
                     min="0"
                     step="0.1"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">kg/month</span>
                 </div>
@@ -773,7 +773,7 @@
                     placeholder="0"
                     min="0"
                     step="0.1"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">kg/month</span>
                 </div>
@@ -781,7 +781,7 @@
               </div>
               <div class="input-group">
                 <label>🌱 Diet Style</label>
-                <select id="dietStyle" onchange="recalc()">
+                <select id="dietStyle"  aria-label="Input for dietStyle">
                   <option value="1.3">Heavy meat eater</option>
                   <option value="1.1">Moderate meat eater</option>
                   <option value="1.0" selected>Average</option>
@@ -810,7 +810,7 @@
               <div class="input-group">
                 <label for="wasteKg">🗑️ General Waste</label>
                 <div class="input-row">
-                  <input type="number" id="wasteKg" placeholder="0" min="0" oninput="recalc()" />
+                  <input type="number" id="wasteKg" placeholder="0" min="0"  / aria-label="Input for wasteKg">
                   <span class="input-unit">kg/week</span>
                 </div>
               </div>
@@ -823,8 +823,8 @@
                     placeholder="0"
                     min="0"
                     max="100"
-                    oninput="recalc()"
-                  />
+                    
+                  / aria-label="Input for recyclingRate">
                   <span class="input-unit">%</span>
                 </div>
               </div>
@@ -836,7 +836,7 @@
                     id="clothingItems"
                     placeholder="0"
                     min="0"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">items/month</span>
                 </div>
@@ -849,7 +849,7 @@
                     id="onlineShopping"
                     placeholder="0"
                     min="0"
-                    oninput="recalc()"
+                    
                   />
                   <span class="input-unit">packages/month</span>
                 </div>
@@ -895,7 +895,7 @@
               <small>kg CO₂e</small>
             </div>
           </div>
-          <button class="btn-primary btn-log" id="logBtn" onclick="logActivity()">
+          <button class="btn-primary btn-log" id="logBtn" >
             <i aria-hidden="true" data-lucide="save"></i>
             Save This Month's Data
           </button>
@@ -910,13 +910,13 @@
             <p class="page-subtitle">Visualize your carbon journey over time</p>
           </div>
           <div class="filter-tabs">
-            <button class="filter-tab active" onclick="setAnalyticsPeriod('month', this)">
+            <button class="filter-tab active" data-period="month">
               Month
             </button>
-            <button class="filter-tab" onclick="setAnalyticsPeriod('quarter', this)">
+            <button class="filter-tab" data-period="quarter">
               Quarter
             </button>
-            <button class="filter-tab" onclick="setAnalyticsPeriod('year', this)">Year</button>
+            <button class="filter-tab" data-period="year">Year</button>
           </div>
         </div>
 
@@ -1011,7 +1011,7 @@
                 min="50"
                 max="800"
                 value="200"
-                oninput="updateGoalSlider()"
+                
               />
               <div class="slider-labels">
                 <span>50 kg</span>
@@ -1022,7 +1022,7 @@
               <span id="goalDisplay">200</span>
               <small>kg CO₂e/month</small>
             </div>
-            <button class="btn-primary" onclick="saveGoal()">Set Goal</button>
+            <button id="btn-save-goal" class="btn-primary">Set Goal</button>
           </div>
           <div class="goal-progress-section" id="goalProgressSection">
             <div class="progress-label">
@@ -1113,7 +1113,7 @@
             <i aria-hidden="true" data-lucide="book-open"></i> Learn & reduce
           </div>
         </div>
-        <button class="btn-primary btn-full" onclick="closeOnboarding()">
+        <button id="btn-close-onboard" class="btn-primary btn-full">
           <i aria-hidden="true" data-lucide="arrow-right"></i> Let's Get Started
         </button>
       </div>

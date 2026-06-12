@@ -7,36 +7,57 @@ import cookieParser from 'cookie-parser';
 import bcrypt from 'bcrypt';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
+import fs from 'fs/promises';
+import { constants } from 'fs';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 20 requests per windowMs
+  message: { message: 'Too many authentication attempts, please try again later.' }
+});
 
 const USERS_PATH = path.join(__dirname, 'users.json');
 
 // Read users from local database
-function readUsers() {
-  if (!fs.existsSync(USERS_PATH)) {
+async function readUsers() {
+  try {
+    await fs.access(USERS_PATH, constants.F_OK);
+  } catch {
     return [];
   }
   try {
-    return JSON.parse(fs.readFileSync(USERS_PATH, 'utf-8'));
-  } catch (e) {
-    console.error('Error reading users.json:', e);
+    const data = await fs.readFile(USERS_PATH, 'utf-8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Error reading users.json:', err);
     return [];
   }
 }
 
 // Write users to local database
-function writeUsers(users) {
+async function writeUsers(users) {
   try {
-    fs.writeFileSync(USERS_PATH, JSON.stringify(users, null, 2));
-  } catch (e) {
-    console.error('Error writing users.json:', e);
+    await fs.writeFile(USERS_PATH, JSON.stringify(users, null, 2));
+  } catch (err) {
+    console.error('Error writing users.json:', err);
   }
 }
 
@@ -69,15 +90,24 @@ function escapeHtml(str) {
 // ─── API Routes ──────────────────────────────────────────────────────────────
 
 // Signup Endpoint
-app.post('/api/signup', async (req, res) => {
+app.post('/api/signup', authLimiter, async (req, res) => {
   const { email, password, name, country } = req.body;
 
   if (!email || !password || !name) {
     return res.status(400).json({ message: 'Email, password, and name are required' });
   }
 
+  // Regex validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+  }
+
   const normalizedEmail = email.trim().toLowerCase();
-  const users = readUsers();
+  const users = await readUsers();
 
   if (users.find((u) => u.email === normalizedEmail)) {
     return res.status(409).json({ message: 'An account with this email already exists' });
@@ -94,7 +124,7 @@ app.post('/api/signup', async (req, res) => {
     };
 
     users.push(newUser);
-    writeUsers(users);
+    await writeUsers(users);
 
     setAuthCookie(req, res, normalizedEmail);
     res.json({ email: newUser.email, name: newUser.name });
@@ -105,7 +135,7 @@ app.post('/api/signup', async (req, res) => {
 });
 
 // Login Endpoint
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', authLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -113,7 +143,7 @@ app.post('/api/login', async (req, res) => {
   }
 
   const normalizedEmail = email.trim().toLowerCase();
-  const users = readUsers();
+  const users = await readUsers();
   const user = users.find((u) => u.email === normalizedEmail);
 
   if (!user) {
@@ -141,13 +171,13 @@ app.post('/api/logout', (req, res) => {
 });
 
 // Current User Session Endpoint
-app.get('/api/me', (req, res) => {
+app.get('/api/me', async (req, res) => {
   const email = req.cookies.session;
   if (!email) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  const users = readUsers();
+  const users = await readUsers();
   const user = users.find((u) => u.email === email);
 
   if (!user) {
@@ -268,10 +298,14 @@ app.get('/share', (req, res) => {
   res.send(html);
 });
 
-// Serve static files from the scratch directory root
-app.use(express.static(path.join(__dirname)));
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 8080;
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+export default app;

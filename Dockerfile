@@ -14,5 +14,5 @@ COPY . .
 # Cloud Run sets the PORT env variable automatically
 EXPOSE 8080
 
-# Serve static files on the specified PORT
-CMD ["sh", "-c", "npx http-server -p ${PORT:-8080}"]
+# Run the secure Express server
+CMD ["node", "server.js"]

@@ -180,6 +180,10 @@ function showToast(msg, type = 'success') {
 
 
 function animateNumber(el, target, decimals = 1, duration = 700) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = target.toFixed(decimals);
+    return;
+  }
   const start = parseFloat(el.textContent) || 0;
   const diff = target - start;
   const startTime = performance.now();
@@ -202,6 +206,8 @@ function navigate(page) {
   const navEl = document.getElementById(`nav-${page}`);
   if (target) target.classList.remove('hidden');
   if (navEl) navEl.classList.add('active');
+  const h2 = target ? target.querySelector('h2') : null;
+  if (h2) { h2.setAttribute('tabindex', '-1'); h2.focus(); }
   state.currentPage = page;
   // Close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
@@ -334,16 +340,29 @@ function renderRecentActivity() {
 
 // ─── Tips ─────────────────────────────────────────────────────────────────────
 function renderTip() {
-  const tip = ECO_TIPS[state.tipIndex % ECO_TIPS.length];
+  let tipsToUse = ECO_TIPS;
+  
+  if (state.logs.length > 0) {
+    const latestLog = state.logs[state.logs.length - 1];
+    const biggestCat = ['transport', 'energy', 'food', 'waste'].reduce((a, b) => 
+      ((latestLog[a] || 0) > (latestLog[b] || 0) ? a : b)
+    );
+    const tailored = ECO_TIPS.filter(t => t.category.toLowerCase() === biggestCat);
+    if (tailored.length > 0) tipsToUse = tailored;
+  }
+  
+  const tip = tipsToUse[state.tipIndex % tipsToUse.length];
   document.getElementById('tipCategory').textContent = tip.category;
   document.getElementById('tipText').textContent = tip.text;
   document.getElementById('tipImpact').textContent = tip.impact;
 
   const dotsEl = document.getElementById('tipDots');
-  dotsEl.innerHTML = ECO_TIPS.map(
-    (_, i) =>
-      `<div class="tip-dot ${i === state.tipIndex % ECO_TIPS.length ? 'active' : ''}"></div>`
-  ).join('');
+  dotsEl.innerHTML = '';
+  tipsToUse.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = `tip-dot ${i === state.tipIndex % tipsToUse.length ? 'active' : ''}`;
+    dotsEl.appendChild(d);
+  });
 }
 
 function nextTip() {
@@ -626,6 +645,7 @@ function closeOnboarding() {
 
 // ─── Background Particles ──────────────────────────────────────────────────────
 function spawnParticles() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const container = document.getElementById('bgParticles');
   const colors = ['#22c55e', '#3b82f6', '#a855f7', '#f97316'];
   setInterval(() => {
@@ -646,34 +666,7 @@ function spawnParticles() {
 }
 
 // ─── Demo Data (for first-time users to see populated UI) ────────────────────
-function seedDemoData() {
-  if (state.logs.length > 0) return; // already has data
-  const months = [];
-  const now = new Date();
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 15);
-    months.push({
-      date: d.toISOString(),
-      monthKey: getMonthKey(d),
-      transport: 90 + Math.random() * 60,
-      energy: 50 + Math.random() * 40,
-      food: 80 + Math.random() * 50,
-      waste: 20 + Math.random() * 20,
-      total: 0,
-      cycleKm: Math.random() * 30,
-    });
-  }
-  months.forEach((m) => {
-    m.total = m.transport + m.energy + m.food + m.waste;
-  });
-  state.logs = months;
-  state.ecoScore = 120;
-  state.streak = 3;
-  state.goal = 250;
-  state.lastLogDate = new Date().toDateString();
-  checkAchievements();
-  saveState();
-}
+function seedDemoData() { /* Silent demo seeding disabled for production trust */ }
 
 // ─── Auth Logic ───────────────────────────────────────────────────────────────
 
@@ -740,7 +733,7 @@ async function handleLogin(e) {
   try {
     const user = await login(email, password);
     setButtonLoading('loginBtn', false);
-    localStorage.setItem('ecotrack_session', JSON.stringify(user));
+    
     loginSuccess(user);
   } catch (err) {
     setButtonLoading('loginBtn', false);
@@ -776,7 +769,7 @@ async function handleSignup(e) {
   try {
     const user = await signup(first, last, email, password, country);
     setButtonLoading('signupBtn', false);
-    localStorage.setItem('ecotrack_session', JSON.stringify(user));
+    
     loginSuccess(user);
   } catch (err) {
     setButtonLoading('signupBtn', false);
@@ -784,14 +777,7 @@ async function handleSignup(e) {
   }
 }
 
-function handleSocialLogin(provider) {
-  const name = `${provider} User`;
-  const email = `${provider.toLowerCase()}@ecotrack.demo`;
-  const session = { email, name };
-  localStorage.setItem('ecotrack_session', JSON.stringify(session));
-  showToast(`✅ Signed in with ${provider}!`);
-  loginSuccess({ email, name });
-}
+
 
 function handleForgot() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -829,7 +815,7 @@ async function handleLogout() {
   } catch (err) {
     console.error('Logout error:', err);
   }
-  localStorage.removeItem('ecotrack_session');
+  
   document.getElementById('authOverlay').classList.remove('hidden');
   switchAuthTab('login');
   document.getElementById('loginEmail').value = '';
@@ -906,3 +892,80 @@ window.handleForgot = handleForgot;
 window.handleLogout = handleLogout;
 window.autoFillDemo = autoFillDemo;
 window.copyShareLink = copyShareLink;
+
+// Native Event Listeners (Refactored from inline HTML)
+document.addEventListener('DOMContentLoaded', () => {
+  // Navigation
+  const navs = ['dashboard', 'calculator', 'analytics', 'goals', 'learn'];
+  navs.forEach(nav => {
+    const el = document.getElementById(`nav-${nav}`);
+    if (el) el.addEventListener('click', (e) => { e.preventDefault(); navigate(nav); });
+  });
+  
+  const binds = {
+    'btn-hero-calc': () => navigate('calculator'),
+    'btn-empty-calc': () => navigate('calculator'),
+    'btn-next-tip': nextTip,
+    'btn-save-goal': saveGoal,
+    'btn-close-onboard': closeOnboarding,
+    'btn-nav-logout': handleLogout,
+    'mobileToggle': toggleMobileNav,
+    'authTabLogin': () => switchAuthTab('login'),
+    'authTabSignup': () => switchAuthTab('signup'),
+    'authForgot': handleForgot,
+    'toggleLoginPwd': function() { togglePwd('loginPassword', this); },
+    'toggleSignupPwd': function() { togglePwd('signupPassword', this); },
+    'logBtn': logActivity
+  };
+  
+  for (const [id, fn] of Object.entries(binds)) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', (e) => { e.preventDefault(); fn(e); });
+  }
+  
+  // Forms
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) loginForm.addEventListener('submit', handleLogin);
+  
+  const signupForm = document.getElementById('signupForm');
+  if (signupForm) signupForm.addEventListener('submit', handleSignup);
+  
+  // Dynamic Inputs
+  const signupPwd = document.getElementById('signupPassword');
+  if (signupPwd) signupPwd.addEventListener('input', (e) => checkPasswordStrength(e.target.value));
+  
+  const goalSlider = document.getElementById('goalSlider');
+  if (goalSlider) goalSlider.addEventListener('input', updateGoalSlider);
+  
+  // Calculator inputs
+  const calcInputs = [
+    'carKm', 'flightShort', 'flightLong', 'transitKm', 'cycleKm',
+    'electricKwh', 'gasM3', 'heatingOil', 'beefKg', 'poultryKg',
+    'fishKg', 'dairyKg', 'veggieKg', 'wasteKg', 'recyclingRate',
+    'clothingItems', 'onlineShopping'
+  ];
+  calcInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', recalc);
+  });
+  
+  const calcSelects = ['carType', 'energySource', 'homeSize', 'dietStyle'];
+  calcSelects.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', recalc);
+  });
+  
+  // Category tabs
+  const cats = ['transport', 'energy', 'food', 'waste'];
+  cats.forEach(cat => {
+    const el = document.getElementById(`tab${cat.charAt(0).toUpperCase() + cat.slice(1)}`);
+    if (el) el.addEventListener('click', () => switchCategory(cat));
+  });
+  
+  // Filter tabs
+  document.querySelectorAll('.filter-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+      setAnalyticsPeriod(this.getAttribute('data-period'), this);
+    });
+  });
+});

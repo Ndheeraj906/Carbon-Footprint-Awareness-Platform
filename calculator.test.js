@@ -16,7 +16,7 @@ import {
   calculateFoodCO2,
   calculateWasteCO2,
   EF,
-} from './src/calculator.js';
+} from './public/src/calculator.js';
 
 // ─── Emission Factor Integrity Tests ──────────────────────────────────────────
 describe('Emission Factors (EF) object', () => {
