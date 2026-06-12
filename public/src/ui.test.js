@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import DOMPurify from 'dompurify';
 import { jest } from '@jest/globals';
 import { renderShareButtons } from './share.js';
 import { renderChallenges, renderAchievements, renderLevels } from './gamification.js';
@@ -9,7 +10,7 @@ import { state } from './state.js';
 
 describe('UI Interaction and Rendering Tests', () => {
   beforeEach(() => {
-    document.body.innerHTML = '';
+    document.body.innerHTML = DOMPurify.sanitize('');
     jest.clearAllMocks();
     
     // Reset global state
@@ -23,7 +24,7 @@ describe('UI Interaction and Rendering Tests', () => {
 
   describe('Social Share UI', () => {
     it('should render 3 social share buttons', () => {
-      document.body.innerHTML = '<div id="shareContainer"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="shareContainer"></div>');
       const container = document.getElementById('shareContainer');
       const stats = { total: 300, month: '2026-06', ecoScore: 100 };
       
@@ -34,7 +35,7 @@ describe('UI Interaction and Rendering Tests', () => {
     });
 
     it('should attach copy link listener correctly', () => {
-      document.body.innerHTML = '<div id="shareContainer"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="shareContainer"></div>');
       const container = document.getElementById('shareContainer');
       const stats = { total: 300, month: '2026-06', ecoScore: 100 };
       
@@ -56,7 +57,7 @@ describe('UI Interaction and Rendering Tests', () => {
 
   describe('Gamification UI Interactions', () => {
     it('should render challenges properly', () => {
-      document.body.innerHTML = '<div id="challengesList"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="challengesList"></div>');
       const list = document.getElementById('challengesList');
       renderChallenges(list, jest.fn());
       
@@ -65,7 +66,7 @@ describe('UI Interaction and Rendering Tests', () => {
     });
 
     it('should disable completed challenges', () => {
-      document.body.innerHTML = '<div id="challengesList"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="challengesList"></div>');
       const list = document.getElementById('challengesList');
       state.completedChallenges = ['c1'];
       
@@ -74,7 +75,7 @@ describe('UI Interaction and Rendering Tests', () => {
     });
 
     it('should render achievements list', () => {
-      document.body.innerHTML = '<div id="achievementsList"></div><div id="achievementsCount"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="achievementsList"></div><div id="achievementsCount"></div>');
       const list = document.getElementById('achievementsList');
       const countEl = document.getElementById('achievementsCount');
       renderAchievements(list, countEl);
@@ -85,7 +86,7 @@ describe('UI Interaction and Rendering Tests', () => {
     });
 
     it('should mark unlocked achievements visually', () => {
-      document.body.innerHTML = '<div id="achievementsList"></div><div id="achievementsCount"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="achievementsList"></div><div id="achievementsCount"></div>');
       const list = document.getElementById('achievementsList');
       const countEl = document.getElementById('achievementsCount');
       state.unlockedAchievements = ['a1']; 
@@ -95,7 +96,7 @@ describe('UI Interaction and Rendering Tests', () => {
     });
     
     it('should render eco levels hierarchy', () => {
-      document.body.innerHTML = '<div id="levelsList"></div>';
+      document.body.innerHTML = DOMPurify.sanitize('<div id="levelsList"></div>');
       const list = document.getElementById('levelsList');
       
       const mockLevels = [
@@ -112,14 +113,14 @@ describe('UI Interaction and Rendering Tests', () => {
 
   describe('Analytics & Stats UI', () => {
     it('should update analytics stat cards', () => {
-      document.body.innerHTML = `
+      document.body.innerHTML = DOMPurify.sanitize(`
         <div id="statTotalAvg"></div>
         <div id="biggestCat"></div>
         <div id="statRecentTrend"></div>
         <div id="logsCount"></div>
         <div id="bestMonth"></div>
         <div id="totalSaved"></div>
-      `;
+      `);
       
       state.currentMonthFilter = 'all';
       state.logs = [
@@ -136,13 +137,13 @@ describe('UI Interaction and Rendering Tests', () => {
     });
 
     it('should handle zero states gracefully', () => {
-      document.body.innerHTML = `
+      document.body.innerHTML = DOMPurify.sanitize(`
         <div id="statTotalAvg"></div>
         <div id="biggestCat"></div>
         <div id="statRecentTrend"></div>
         <div id="logsCount"></div>
         <div id="bestMonth"></div>
-      `;
+      `);
       
       state.logs = [];
       updateAnalyticsStats();
@@ -153,11 +154,11 @@ describe('UI Interaction and Rendering Tests', () => {
   
   describe('Global Modal UI Logic', () => {
     it('should simulate modal close on backdrop click', () => {
-      document.body.innerHTML = `
+      document.body.innerHTML = DOMPurify.sanitize(`
         <div id="testModal" class="modal-backdrop">
            <div class="modal-content"></div>
         </div>
-      `;
+      `);
       const modal = document.getElementById('testModal');
       modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.add('hidden');
@@ -168,11 +169,11 @@ describe('UI Interaction and Rendering Tests', () => {
     });
 
     it('should not close modal if inner content clicked', () => {
-      document.body.innerHTML = `
+      document.body.innerHTML = DOMPurify.sanitize(`
         <div id="testModal" class="modal-backdrop">
            <div id="inner" class="modal-content"></div>
         </div>
-      `;
+      `);
       const modal = document.getElementById('testModal');
       modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.add('hidden');
@@ -185,7 +186,7 @@ describe('UI Interaction and Rendering Tests', () => {
     
     it('should simulate form submit preventDefault behavior', () => {
        const handler = jest.fn((e) => e.preventDefault());
-       document.body.innerHTML = `<form id="f"><button type="submit">Go</button></form>`;
+       document.body.innerHTML = DOMPurify.sanitize(`<form id="f"><button type="submit">Go</button></form>`);
        const form = document.getElementById('f');
        form.addEventListener('submit', handler);
        
@@ -197,7 +198,7 @@ describe('UI Interaction and Rendering Tests', () => {
     });
     
     it('should validate form inputs via constraint validation API', () => {
-       document.body.innerHTML = `<form id="f"><input id="inp" required /></form>`;
+       document.body.innerHTML = DOMPurify.sanitize(`<form id="f"><input id="inp" required /></form>`);
        const inp = document.getElementById('inp');
        const form = document.getElementById('f');
        

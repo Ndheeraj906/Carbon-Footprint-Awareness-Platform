@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { login, logout, getCurrentUser } from './auth.js';
+import { login, logout, getCurrentUser, signup } from './auth.js';
 
 describe('Frontend Auth API', () => {
   beforeEach(() => {
@@ -52,5 +52,44 @@ describe('Frontend Auth API', () => {
     global.fetch.mockResolvedValueOnce({ ok: false });
     const user = await getCurrentUser();
     expect(user).toBeNull();
+  });
+
+  describe('signup()', () => {
+    it('should call /api/signup with full name and return data on success', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ email: 'new@example.com', name: 'Jane Doe' })
+      });
+
+      const result = await signup('Jane', 'Doe', 'new@example.com', 'Pass123!', 'US');
+      expect(global.fetch).toHaveBeenCalledWith('/api/signup', expect.objectContaining({
+        method: 'POST',
+        credentials: 'include'
+      }));
+      const body = JSON.parse(global.fetch.mock.calls[0][1].body);
+      expect(body.name).toBe('Jane Doe');
+      expect(result.name).toBe('Jane Doe');
+    });
+
+    it('should use first name only when last name is empty', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ email: 'new@example.com', name: 'Jane' })
+      });
+
+      await signup('Jane', '', 'new@example.com', 'Pass123!', 'US');
+      const body = JSON.parse(global.fetch.mock.calls[0][1].body);
+      expect(body.name).toBe('Jane');
+    });
+
+    it('should throw error on signup failure', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ message: 'Email already exists' })
+      });
+
+      await expect(signup('Jane', 'Doe', 'dup@example.com', 'Pass123!', 'US'))
+        .rejects.toThrow('Email already exists');
+    });
   });
 });

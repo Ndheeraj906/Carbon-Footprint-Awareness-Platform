@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 /**
  * @module gamification
  * @description Gamification engine for EcoTrack — achievements, challenges,
@@ -107,7 +108,7 @@ export function completeChallenge(id, points, showToast, onComplete) {
  * @param {Function} completeChallengeHandler - window-exposed handler
  */
 export function renderChallenges(el) {
-  el.innerHTML = CHALLENGES.map((c) => {
+  el.innerHTML = DOMPurify.sanitize(CHALLENGES.map((c) => {
     const done = state.completedChallenges.includes(c.id);
     return `<div class="challenge-card ${done ? 'completed' : ''}">
       <div class="challenge-emoji">${c.emoji}</div>
@@ -121,7 +122,7 @@ export function renderChallenges(el) {
         ${done ? '✅ Completed!' : '✓ Mark Complete'}
       </button>
     </div>`;
-  }).join('');
+  }).join(''));
 }
 
 /**
@@ -130,14 +131,14 @@ export function renderChallenges(el) {
  * @param {HTMLElement} countEl
  */
 export function renderAchievements(el, countEl) {
-  el.innerHTML = ACHIEVEMENTS.map((a) => {
+  el.innerHTML = DOMPurify.sanitize(ACHIEVEMENTS.map((a) => {
     const unlocked = state.unlockedAchievements.includes(a.id);
     return `<div class="achievement-item ${unlocked ? 'unlocked' : 'locked'}" role="listitem" aria-label="${a.name}: ${unlocked ? 'Unlocked' : 'Locked'}">
       <div class="achievement-icon">${a.emoji}</div>
       <div class="achievement-name">${a.name}</div>
       <div class="achievement-desc">${a.desc}</div>
     </div>`;
-  }).join('');
+  }).join(''));
   const count = state.unlockedAchievements.length;
   countEl.textContent = `${count} / ${ACHIEVEMENTS.length} unlocked`;
 }
@@ -149,7 +150,7 @@ export function renderAchievements(el, countEl) {
  */
 export function renderLevels(el, ecoLevels) {
   const currentLevel = getLevel(state.ecoScore);
-  el.innerHTML = ecoLevels.map((l) => `
+  el.innerHTML = DOMPurify.sanitize(ecoLevels.map((l) => `
     <div class="level-item ${l.name === currentLevel.name ? 'current' : ''}">
       <div class="level-emoji">${l.emoji}</div>
       <div class="level-info">
@@ -158,5 +159,5 @@ export function renderLevels(el, ecoLevels) {
       </div>
       ${l.name === currentLevel.name ? '<span class="level-badge active-badge">Current Level</span>' : ''}
     </div>
-  `).join('');
+  `).join(''));
 }

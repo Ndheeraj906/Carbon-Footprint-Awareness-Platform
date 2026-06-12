@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 /**
  * @module charts
  * @description Chart rendering functions for EcoTrack Analytics.
@@ -73,9 +74,9 @@ export function updateCategoryDonut(logs) {
 
   // Legend
   const legendEl = document.getElementById('donutLegend');
-  legendEl.innerHTML = labels
+  legendEl.innerHTML = DOMPurify.sanitize(labels
     .map((l, i) => `<div class="legend-item"><div class="legend-dot" style="background:${colors[i]}"></div><span>${l}</span></div>`)
-    .join('');
+    .join(''));
 }
 
 // ─── Analytics Charts ──────────────────────────────────────────────────────────

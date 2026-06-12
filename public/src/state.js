@@ -1,8 +1,7 @@
 /**
  * @module state
- * @description Centralised application state and persistence for EcoTrack.
- * Using localStorage intentionally for this client-side demo; a production
- * system would replace this with a secure server-side session store.
+ * @description Centralised application state. 
+ * Completely syncs with SQLite backend. No localStorage dependencies.
  */
 
 export const ECO_LEVELS = [
@@ -13,7 +12,6 @@ export const ECO_LEVELS = [
   { emoji: '🌍', name: 'Forest Guardian',minScore: 1000, maxScore: Infinity },
 ];
 
-/** @type {{ logs: Array, ecoScore: number, streak: number, lastLogDate: string|null, goal: number, completedChallenges: string[], unlockedAchievements: string[], tipIndex: number, currentPage: string, analyticsPeriod: string }} */
 export let state = {
   logs: [],
   ecoScore: 0,
@@ -27,22 +25,38 @@ export let state = {
   analyticsPeriod: 'month',
 };
 
-const STORAGE_KEY = 'ecotrack_v2';
-
-/** Persist state to localStorage. */
-export function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+/** Get the CSRF token from the document cookie for API requests. */
+function getCsrfToken() {
+  const match = document.cookie.match(/(?:^|;) ?csrfToken=([^;]*)(?:;|$)/);
+  return match ? match[1] : '';
 }
 
-/** Load state from localStorage, merging with defaults. */
-export function loadState() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    try {
-      state = { ...state, ...JSON.parse(raw) };
-    } catch (e) {
-      console.warn('EcoTrack: State parse error — starting fresh.', e);
+/** Push state to backend SQLite. */
+export async function saveState() {
+  try {
+    await fetch('/api/me/state', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-csrf-token': getCsrfToken()
+      },
+      body: JSON.stringify(state)
+    });
+  } catch (err) {
+    console.error('Failed to sync state:', err);
+  }
+}
+
+/** Load state from backend SQLite, merging with defaults. */
+export async function loadState() {
+  try {
+    const res = await fetch('/api/me/state');
+    if (res.ok) {
+      const remoteState = await res.json();
+      state = { ...state, ...remoteState };
     }
+  } catch (err) {
+    console.error('Failed to load remote state:', err);
   }
 }
 
@@ -50,34 +64,23 @@ export function loadState() {
  * Merge a partial update into state and persist.
  * @param {Partial<typeof state>} patch
  */
-export function patchState(patch) {
+export async function patchState(patch) {
   state = { ...state, ...patch };
-  saveState();
+  await saveState();
 }
 
 /**
  * Get the current Eco Level object for a given score.
  * @param {number} score
- * @returns {{ emoji: string, name: string, minScore: number, maxScore: number }}
  */
 export function getLevel(score) {
   return ECO_LEVELS.find((l) => score >= l.minScore && score <= l.maxScore) || ECO_LEVELS[0];
 }
 
-/**
- * Returns a YYYY-MM key for the given date (defaults to today).
- * @param {Date} [date]
- * @returns {string}
- */
 export function getMonthKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 }
 
-/**
- * Format a date string to human-readable format.
- * @param {string|Date} d
- * @returns {string}
- */
 export function formatDate(d) {
   return new Date(d).toLocaleDateString('en-US', {
     month: 'short',
@@ -87,11 +90,9 @@ export function formatDate(d) {
 }
 
 /**
- * Debounce utility — returns a function that delays invoking `fn`
- * until after `wait` ms have elapsed since the last call.
+ * Debounce utility
  * @param {Function} fn
- * @param {number} wait - milliseconds (default 150)
- * @returns {Function}
+ * @param {number} wait
  */
 export function debounce(fn, wait = 150) {
   let timer;

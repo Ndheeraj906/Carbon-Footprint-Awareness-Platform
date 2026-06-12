@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 /**
  * @module share
  * @description Social sharing module for EcoTrack.
@@ -36,7 +37,7 @@ export function renderShareButtons(container, stats) {
   const encodedMsg = encodeURIComponent(msg);
   const encodedUrl = encodeURIComponent(url);
 
-  container.innerHTML = `
+  container.innerHTML = DOMPurify.sanitize(`
     <div class="share-panel" role="region" aria-label="Share your eco stats">
       <h4 class="share-title">📣 Spread the word — inspire others!</h4>
       <div class="share-buttons">
@@ -81,7 +82,7 @@ export function renderShareButtons(container, stats) {
       </div>
       <p class="share-url" id="shareUrlDisplay" style="word-break:break-all;opacity:0.6;font-size:0.75rem;margin-top:0.5rem;">${url}</p>
     </div>
-  `;
+  `);
 
   // Store URL for copy function
   window.__ecoShareUrl = url;
@@ -100,7 +101,7 @@ export async function copyShareLink() {
     if (btn) {
       btn.textContent = '✅ Copied!';
       setTimeout(() => {
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy Link`;
+        btn.innerHTML = DOMPurify.sanitize(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy Link`);
       }, 2000);
     }
   } catch {

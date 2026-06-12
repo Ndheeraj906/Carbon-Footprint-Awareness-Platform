@@ -26,8 +26,8 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -709,7 +709,7 @@
             </h3>
             <div class="input-grid">
               <div class="input-group">
-                <label>🥩 Beef / Lamb</label>
+                <label for="beefKg">🥩 Beef / Lamb</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -723,7 +723,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>🍗 Poultry / Pork</label>
+                <label for="poultryKg">🍗 Poultry / Pork</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -737,7 +737,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>🐟 Seafood / Fish</label>
+                <label for="fishKg">🐟 Seafood / Fish</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -751,7 +751,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>🥛 Dairy Products</label>
+                <label for="dairyKg">🥛 Dairy Products</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -765,7 +765,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>🥦 Vegetables / Legumes</label>
+                <label for="veggieKg">🥦 Vegetables / Legumes</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -829,7 +829,7 @@
                 </div>
               </div>
               <div class="input-group">
-                <label>🛍️ New Clothing Items</label>
+                <label for="clothingItems">🛍️ New Clothing Items</label>
                 <div class="input-row">
                   <input
                     type="number"
@@ -891,7 +891,7 @@
           <div class="summary-total">
             <span>Monthly Total</span>
             <div class="total-value">
-              <span id="totalCO2Big">0.0</span>
+              <span id="totalCO2Big" aria-live="polite">0.0</span>
               <small>kg CO₂e</small>
             </div>
           </div>

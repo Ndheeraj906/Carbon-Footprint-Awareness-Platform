@@ -1,3 +1,6 @@
+import { navigate, loadLucide } from './src/router.js';
+import './src/events.js';
+import DOMPurify from 'dompurify';
 import {
   calculateTransportCO2,
   calculateEnergyCO2,
@@ -199,25 +202,7 @@ function animateNumber(el, target, decimals = 1, duration = 700) {
 
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
-function navigate(page) {
-  document.querySelectorAll('.page').forEach((p) => p.classList.add('hidden'));
-  document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
-  const target = document.getElementById(`page-${page}`);
-  const navEl = document.getElementById(`nav-${page}`);
-  if (target) target.classList.remove('hidden');
-  if (navEl) navEl.classList.add('active');
-  const h2 = target ? target.querySelector('h2') : null;
-  if (h2) { h2.setAttribute('tabindex', '-1'); h2.focus(); }
-  state.currentPage = page;
-  // Close mobile sidebar
-  document.getElementById('sidebar').classList.remove('open');
-  // Page-specific init
-  if (page === 'analytics') initAnalyticsPage();
-  if (page === 'goals') initGoalsPage();
-  if (page === 'learn') initLearnPage();
-  if (page === 'dashboard') updateDashboard();
-  return false;
-}
+
 
 function toggleMobileNav() {
   document.getElementById('sidebar').classList.toggle('open');
@@ -300,11 +285,11 @@ function updateDashboard() {
 function renderRecentActivity() {
   const el = document.getElementById('recentActivity');
   if (state.logs.length === 0) {
-    el.innerHTML = `<div class="empty-state">
+    el.innerHTML = DOMPurify.sanitize(`<div class="empty-state">
       <i data-lucide="leaf"></i>
       <p>No activity logged yet. Start tracking!</p>
       <button class="btn-primary" onclick="navigate('calculator')">Log First Activity</button>
-    </div>`;
+    </div>`);
     lucide.createIcons();
     return;
   }
@@ -319,7 +304,7 @@ function renderRecentActivity() {
     const cats = ['transport', 'energy', 'food', 'waste'];
     return cats.reduce((a, b) => ((log[a] || 0) > (log[b] || 0) ? a : b));
   };
-  el.innerHTML = recent
+  el.innerHTML = DOMPurify.sanitize(recent
     .map((log) => {
       const cat = biggest(log);
       const meta = catMeta[cat];
@@ -334,7 +319,7 @@ function renderRecentActivity() {
       <div class="activity-co2">${log.total.toFixed(1)} kg</div>
     </div>`;
     })
-    .join('');
+    .join(''));
   lucide.createIcons();
 }
 
@@ -357,7 +342,7 @@ function renderTip() {
   document.getElementById('tipImpact').textContent = tip.impact;
 
   const dotsEl = document.getElementById('tipDots');
-  dotsEl.innerHTML = '';
+  dotsEl.innerHTML = DOMPurify.sanitize('');
   tipsToUse.forEach((_, i) => {
     const d = document.createElement('div');
     d.className = `tip-dot ${i === state.tipIndex % tipsToUse.length ? 'active' : ''}`;
@@ -576,7 +561,7 @@ function renderFactsMarquee() {
   // Double the facts for seamless marquee loop
   const doubled = [...facts, ...facts];
   const el = document.getElementById('factsMarquee');
-  el.innerHTML = doubled
+  el.innerHTML = DOMPurify.sanitize(doubled
     .map(
       (f) => `
     <div class="fact-item">
@@ -584,12 +569,12 @@ function renderFactsMarquee() {
     </div>
   `
     )
-    .join('');
+    .join(''));
 }
 
 function renderLearnCards() {
   const el = document.getElementById('learnGrid');
-  el.innerHTML = LEARN_CARDS.map(
+  el.innerHTML = DOMPurify.sanitize(LEARN_CARDS.map(
     (c) => `
     <div class="learn-card">
       <div class="learn-card-header">
@@ -611,12 +596,12 @@ function renderLearnCards() {
       </div>
     </div>
   `
-  ).join('');
+  ).join(''));
 }
 
 function renderQuickWins() {
   const el = document.getElementById('quickWinsList');
-  el.innerHTML = QUICK_WINS.map(
+  el.innerHTML = DOMPurify.sanitize(QUICK_WINS.map(
     (w) => `
     <div class="quick-win-item">
       <div class="quick-win-emoji">${w.emoji}</div>
@@ -626,7 +611,7 @@ function renderQuickWins() {
       <div class="quick-win-saving">${w.saving}</div>
     </div>
   `
-  ).join('');
+  ).join(''));
 }
 
 // ─── Sidebar Score Update ──────────────────────────────────────────────────────
@@ -869,103 +854,3 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-
-// Expose functions to window for HTML inline handlers
-window.navigate = navigate;
-window.switchAuthTab = switchAuthTab;
-window.toggleMobileNav = toggleMobileNav;
-window.nextTip = nextTip;
-window.switchCategory = switchCategory;
-window.recalc = recalc;
-window.logActivity = logActivity;
-window.setAnalyticsPeriod = setAnalyticsPeriod;
-window.updateGoalSlider = updateGoalSlider;
-window.saveGoal = saveGoal;
-window.completeChallenge = completeChallenge;
-window.closeOnboarding = closeOnboarding;
-window.togglePwd = togglePwd;
-window.checkPasswordStrength = checkPasswordStrength;
-window.handleLogin = handleLogin;
-window.handleSignup = handleSignup;
-window.handleSocialLogin = handleSocialLogin;
-window.handleForgot = handleForgot;
-window.handleLogout = handleLogout;
-window.autoFillDemo = autoFillDemo;
-window.copyShareLink = copyShareLink;
-
-// Native Event Listeners (Refactored from inline HTML)
-document.addEventListener('DOMContentLoaded', () => {
-  // Navigation
-  const navs = ['dashboard', 'calculator', 'analytics', 'goals', 'learn'];
-  navs.forEach(nav => {
-    const el = document.getElementById(`nav-${nav}`);
-    if (el) el.addEventListener('click', (e) => { e.preventDefault(); navigate(nav); });
-  });
-  
-  const binds = {
-    'btn-hero-calc': () => navigate('calculator'),
-    'btn-empty-calc': () => navigate('calculator'),
-    'btn-next-tip': nextTip,
-    'btn-save-goal': saveGoal,
-    'btn-close-onboard': closeOnboarding,
-    'btn-nav-logout': handleLogout,
-    'mobileToggle': toggleMobileNav,
-    'authTabLogin': () => switchAuthTab('login'),
-    'authTabSignup': () => switchAuthTab('signup'),
-    'authForgot': handleForgot,
-    'toggleLoginPwd': function() { togglePwd('loginPassword', this); },
-    'toggleSignupPwd': function() { togglePwd('signupPassword', this); },
-    'logBtn': logActivity
-  };
-  
-  for (const [id, fn] of Object.entries(binds)) {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('click', (e) => { e.preventDefault(); fn(e); });
-  }
-  
-  // Forms
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) loginForm.addEventListener('submit', handleLogin);
-  
-  const signupForm = document.getElementById('signupForm');
-  if (signupForm) signupForm.addEventListener('submit', handleSignup);
-  
-  // Dynamic Inputs
-  const signupPwd = document.getElementById('signupPassword');
-  if (signupPwd) signupPwd.addEventListener('input', (e) => checkPasswordStrength(e.target.value));
-  
-  const goalSlider = document.getElementById('goalSlider');
-  if (goalSlider) goalSlider.addEventListener('input', updateGoalSlider);
-  
-  // Calculator inputs
-  const calcInputs = [
-    'carKm', 'flightShort', 'flightLong', 'transitKm', 'cycleKm',
-    'electricKwh', 'gasM3', 'heatingOil', 'beefKg', 'poultryKg',
-    'fishKg', 'dairyKg', 'veggieKg', 'wasteKg', 'recyclingRate',
-    'clothingItems', 'onlineShopping'
-  ];
-  calcInputs.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', recalc);
-  });
-  
-  const calcSelects = ['carType', 'energySource', 'homeSize', 'dietStyle'];
-  calcSelects.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', recalc);
-  });
-  
-  // Category tabs
-  const cats = ['transport', 'energy', 'food', 'waste'];
-  cats.forEach(cat => {
-    const el = document.getElementById(`tab${cat.charAt(0).toUpperCase() + cat.slice(1)}`);
-    if (el) el.addEventListener('click', () => switchCategory(cat));
-  });
-  
-  // Filter tabs
-  document.querySelectorAll('.filter-tab').forEach(btn => {
-    btn.addEventListener('click', function() {
-      setAnalyticsPeriod(this.getAttribute('data-period'), this);
-    });
-  });
-});
