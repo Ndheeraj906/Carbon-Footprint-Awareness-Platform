@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 8080;
 // Initialize SQLite DB (will create if not exists)
 const db = new Database(path.join(__dirname, 'ecotrack.db'));
 // Run schema if fresh
-if (!fs.existsSync(path.join(__dirname, 'ecotrack.db')) || db.prepare('SELECT COUNT(*) AS c FROM sqlite_master WHERE type="table"').get().c === 0) {
+if (!fs.existsSync(path.join(__dirname, 'ecotrack.db')) || db.prepare('SELECT COUNT(*) AS c FROM sqlite_master WHERE type=\'table\'').get().c === 0) {
   const schema = fs.readFileSync(path.join(__dirname, 'db', 'schema.sql'), 'utf-8');
   db.exec(schema);
 }
@@ -62,14 +62,8 @@ app.use(csurf({ cookie: true }));
 
 // Serve static assets – cache busting disabled for dev, enable for prod via env var
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
-  setHeaders: (res, filePath) => {
-    if (path.extname(filePath) === '.html') {
-      // Ensure CSP header for HTML files
-      const nonce = res.locals.nonce;
-      res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none'`);
-    }
-  }
+  index: false,
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
 }));
 
 // API routes
@@ -78,9 +72,21 @@ import apiRouter from './routes/api.js';
 app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
-// Catch‑all for SPA routing – serve index.html
+// Catch‑all for SPA routing – serve index.html dynamically
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  const htmlPath = path.join(__dirname, 'public', 'index.html');
+  fs.readFile(htmlPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error loading page');
+    }
+    const nonce = res.locals.nonce;
+    const csrfToken = req.csrfToken();
+    let html = data.replace('<!-- CSRF_TOKEN -->', `<meta name="csrf-token" content="${csrfToken}">`);
+    html = html.replace(/\$\{CSP_NONCE\}/g, nonce);
+    res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none'`);
+    res.send(html);
+  });
 });
 
 app.listen(PORT, () => {

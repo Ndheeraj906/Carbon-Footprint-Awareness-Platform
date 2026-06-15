@@ -5,7 +5,7 @@ RUN npm ci --only=production
 COPY . .
 # No build step needed for native ES modules
 
-FROM node:20-slim
+FROM node:20
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080
