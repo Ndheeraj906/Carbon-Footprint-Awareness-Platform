@@ -24,16 +24,23 @@
         "charts": "/src/charts.js",
         "gamification": "/src/gamification.js",
         "share": "/src/share.js",
+        "toast": "/src/toast.js",
         "app": "/src/app.js"
       }
     }
   </script>
 </head>
 <body>
+  <a href="#appRoot" class="skip-link">Skip to main content</a>
   <header class="site-header" role="banner">
-    <img src="/logo.svg" alt="EcoTrack logo" class="logo" />
-    <h1 class="site-title">EcoTrack</h1>
-    <nav class="site-nav" aria-label="Main navigation">
+    <div class="header-brand">
+      <img src="/logo.svg" alt="" class="logo" aria-hidden="true" />
+      <h1 class="site-title">EcoTrack</h1>
+    </div>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="siteNav" aria-label="Toggle navigation menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+    </button>
+    <nav id="siteNav" class="site-nav" aria-label="Main navigation">
       <ul>
         <li><button id="navDashboard" class="nav-btn" aria-controls="dashboard" aria-selected="true">Dashboard</button></li>
         <li><button id="navCalculator" class="nav-btn" aria-controls="calculator" aria-selected="false">Calculator</button></li>

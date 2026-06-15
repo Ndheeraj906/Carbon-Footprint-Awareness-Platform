@@ -2,6 +2,7 @@
 
 import { state } from 'state';
 import { apiFetch } from 'app';
+import { showToast } from 'toast';
 
 // Simple emission factors (kg CO2 per unit)
 const EMISSION_FACTORS = {
@@ -33,8 +34,7 @@ export function renderCalculator() {
     <div id="calcAlert" class="hidden" role="alert" aria-live="polite"></div>
 
     <form id="calcForm" class="calc-form">
-      <div class="form-group">
-        <label for="activityType">Activity Type</label>
+      <div class="form-group floating">
         <select id="activityType" name="activity" required>
           <option value="" disabled selected>Select an activity...</option>
           <optgroup label="Transport">
@@ -51,11 +51,12 @@ export function renderCalculator() {
             <option value="plant_meal">Plant-based Meal - meals</option>
           </optgroup>
         </select>
+        <label for="activityType">Activity Type</label>
       </div>
 
-      <div class="form-group">
+      <div class="form-group floating">
+        <input type="number" id="amount" name="amount" step="0.1" min="0" required placeholder=" " />
         <label for="amount">Amount / Distance</label>
-        <input type="number" id="amount" name="amount" step="0.1" min="0" required placeholder="e.g., 50" />
       </div>
 
       <div class="estimate-box">
@@ -110,9 +111,7 @@ export function renderCalculator() {
         throw new Error(err.error || 'Failed to log activity');
       }
 
-      alertBox.textContent = 'Activity logged successfully!';
-      alertBox.className = 'alert success';
-      alertBox.classList.remove('hidden');
+      showToast('Activity logged successfully!', 'success');
       
       form.reset();
       calculateEstimate();
@@ -125,9 +124,7 @@ export function renderCalculator() {
       }
 
     } catch (err) {
-      alertBox.textContent = err.message;
-      alertBox.className = 'alert error';
-      alertBox.classList.remove('hidden');
+      showToast(err.message, 'error');
     } finally {
       logBtn.disabled = false;
       logBtn.textContent = 'Log Activity';

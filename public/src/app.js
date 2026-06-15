@@ -55,12 +55,27 @@ const appRouter = new Router(routes, 'dashboard');
 
 document.addEventListener('DOMContentLoaded', () => {
   // Setup navigation button listeners to change hash
+  const siteNav = document.getElementById('siteNav');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
   document.querySelectorAll('.site-nav .nav-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const targetHash = e.target.getAttribute('aria-controls');
+      const targetHash = e.target.closest('button').getAttribute('aria-controls');
       appRouter.navigate(targetHash);
+      if (siteNav.classList.contains('open')) {
+        siteNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
     });
   });
+
+  if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+      const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', !isExpanded);
+      siteNav.classList.toggle('open');
+    });
+  }
 
   // Set current year in footer
   document.getElementById('currentYear').textContent = new Date().getFullYear();

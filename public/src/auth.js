@@ -2,6 +2,7 @@
 
 import { state } from 'state';
 import { apiFetch } from 'app';
+import { showToast } from 'toast';
 
 export function renderAuth() {
   const container = document.createElement('section');
@@ -18,13 +19,14 @@ export function renderAuth() {
     <div id="authAlert" class="hidden" role="alert" aria-live="assertive"></div>
 
     <form id="authForm" class="auth-form">
-      <div class="form-group">
+      <div class="form-group floating">
+        <input type="email" id="email" name="email" required autocomplete="email" placeholder=" " />
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" required autocomplete="email" />
       </div>
-      <div class="form-group">
+      <div class="form-group floating">
+        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder=" " />
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required autocomplete="current-password" />
+        <button type="button" class="pwd-toggle" aria-label="Toggle password visibility">Show</button>
       </div>
       <button type="submit" class="submit-btn" id="submitBtn">Login</button>
     </form>
@@ -41,9 +43,7 @@ export function renderAuth() {
   const submitBtn = container.querySelector('#submitBtn');
 
   function showAlert(msg, isError = true) {
-    alertBox.textContent = msg;
-    alertBox.className = isError ? 'alert error' : 'alert success';
-    alertBox.classList.remove('hidden');
+    showToast(msg, isError ? 'error' : 'success');
   }
 
   function toggleMode(loginMode) {
@@ -53,7 +53,17 @@ export function renderAuth() {
     tabLogin.classList.toggle('active', isLogin);
     tabSignup.classList.toggle('active', !isLogin);
     submitBtn.textContent = isLogin ? 'Login' : 'Sign Up';
-    alertBox.classList.add('hidden');
+  }
+
+  // Password visibility toggle
+  const pwdToggle = container.querySelector('.pwd-toggle');
+  const pwdInput = container.querySelector('#password');
+  if (pwdToggle && pwdInput) {
+    pwdToggle.addEventListener('click', () => {
+      const type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      pwdInput.setAttribute('type', type);
+      pwdToggle.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
   }
 
   tabLogin.addEventListener('click', () => toggleMode(true));

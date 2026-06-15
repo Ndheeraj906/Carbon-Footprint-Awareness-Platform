@@ -6,7 +6,12 @@ import { apiFetch } from 'app';
 // Helper to generate a simple SVG Bar Chart
 function generateBarChart(data) {
   if (!data || data.length === 0) {
-    return `<div class="empty-state">No activities logged yet. Head to the calculator!</div>`;
+    return `
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <h3>No Activities Logged</h3>
+        <p>Your dashboard is empty. Head to the calculator to log your first activity!</p>
+      </div>`;
   }
 
   // Aggregate by type
@@ -71,12 +76,15 @@ export function renderDashboard() {
   container.innerHTML = `
     <h2>Your Carbon Footprint</h2>
     <div id="chartWrapper" class="chart-wrapper">
-      <p>Loading data...</p>
+      <div class="skeleton" style="height: 200px; width: 100%;"></div>
     </div>
     
     <div class="recent-activities">
       <h3>Recent Activities</h3>
-      <ul id="activityList" class="activity-list"></ul>
+      <ul id="activityList" class="activity-list">
+        <li class="skeleton" style="height: 50px;"></li>
+        <li class="skeleton" style="height: 50px;"></li>
+      </ul>
     </div>
   `;
 
@@ -96,7 +104,7 @@ export function renderDashboard() {
           <span class="act-emission">${act.emission.toFixed(2)} kg</span>
         </li>
       `;
-    }).join('') || '<li>No recent activities</li>';
+    }).join('') || '<div class="empty-state" style="padding:2rem;"><p>No recent activities</p></div>';
   }
 
   // Check if we have state already

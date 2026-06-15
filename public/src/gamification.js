@@ -2,6 +2,7 @@
 
 import { state } from 'state';
 import { apiFetch } from 'app';
+import { showToast } from 'toast';
 
 export function renderGamification() {
   const container = document.createElement('section');
@@ -25,11 +26,10 @@ export function renderGamification() {
 
       <div class="new-goal-form">
         <h3>Set a New Target</h3>
-        <div id="goalAlert" class="hidden" role="alert"></div>
         <form id="goalForm" class="goal-form">
-          <div class="form-group">
+          <div class="form-group floating">
+            <input type="number" id="goalTarget" name="target" step="1" min="1" required placeholder=" " />
             <label for="goalTarget">Target Max Weekly Emissions (kg CO₂)</label>
-            <input type="number" id="goalTarget" name="target" step="1" min="1" required placeholder="e.g., 20" />
           </div>
           <button type="submit" class="submit-btn" id="setGoalBtn">Set Goal</button>
         </form>
@@ -60,7 +60,13 @@ export function renderGamification() {
 
   function renderGoals(goals) {
     if (!goals || goals.length === 0) {
-      goalsList.innerHTML = '<p class="empty-state">No goals set yet. Create one below!</p>';
+      goalsList.innerHTML = `
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+          <h3>No Goals Set</h3>
+          <p>Set your first weekly emission target below.</p>
+        </div>
+      `;
       return;
     }
     
@@ -115,9 +121,7 @@ export function renderGamification() {
       });
       if (!res.ok) throw new Error('Failed to set goal');
       
-      goalAlert.textContent = 'Goal set successfully!';
-      goalAlert.className = 'alert success';
-      goalAlert.classList.remove('hidden');
+      showToast('Goal set successfully!', 'success');
       goalForm.reset();
       
       // Refresh goals
@@ -129,9 +133,7 @@ export function renderGamification() {
       }
 
     } catch (err) {
-      goalAlert.textContent = err.message;
-      goalAlert.className = 'alert error';
-      goalAlert.classList.remove('hidden');
+      showToast(err.message, 'error');
     } finally {
       setGoalBtn.disabled = false;
     }
