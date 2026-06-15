@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoTrack – Carbon Footprint Awareness</title>
+  <!-- CSP meta – nonce will be injected by server for any inline script -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-${CSP_NONCE}'; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none'" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/lucide.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <!-- Import map for native ES modules -->
+  <script type="importmap">
+    {
+      "imports": {
+        "router": "/src/router.js",
+        "auth": "/src/auth.js",
+        "state": "/src/state.js",
+        "calculator": "/src/calculator.js",
+        "charts": "/src/charts.js",
+        "gamification": "/src/gamification.js",
+        "share": "/src/share.js",
+        "app": "/src/app.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <img src="/logo.svg" alt="EcoTrack logo" class="logo" />
+    <h1 class="site-title">EcoTrack</h1>
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        <li><button id="navDashboard" class="nav-btn" aria-controls="dashboard" aria-selected="true">Dashboard</button></li>
+        <li><button id="navCalculator" class="nav-btn" aria-controls="calculator" aria-selected="false">Calculator</button></li>
+        <li><button id="navChallenges" class="nav-btn" aria-controls="challenges" aria-selected="false">Challenges</button></li>
+        <li><button id="navProfile" class="nav-btn" aria-controls="profile" aria-selected="false">Profile</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="appRoot" class="main-content" role="main">
+    <!-- SPA will inject sections here -->
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>&copy; <span id="currentYear"></span> EcoTrack – All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>
