@@ -1,0 +1,28 @@
+{
+  "name": "carbon-footprint-awareness-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ndheeraj906/Carbon-Footprint-Awareness-Platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ndheeraj906/Carbon-Footprint-Awareness-Platform/issues"
+  },
+  "homepage": "https://github.com/Ndheeraj906/Carbon-Footprint-Awareness-Platform#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
