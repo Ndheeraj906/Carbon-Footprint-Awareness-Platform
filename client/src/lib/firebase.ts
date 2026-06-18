@@ -6,9 +6,9 @@ const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 export const isMockMode = !apiKey;
 
 
-export let auth: any = null;
-export let db: any = null;
-export let googleProvider: any = null;
+export let auth: unknown = null;
+export let db: unknown = null;
+export let googleProvider: unknown = null;
 
 if (!isMockMode) {
   const firebaseConfig = {

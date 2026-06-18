@@ -18,8 +18,8 @@ export default function Login() {
     setError(null);
     try {
       const user = await signInWithGoogle();
-      // In mock mode, the Firebase auth listener isn't running, so we manually update state
-      useAuthStore.getState().setUser(user as unknown as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      useAuthStore.getState().setUser(user as any);
     } catch (err: unknown) {
       console.error(err);
       if (err instanceof Error) {
