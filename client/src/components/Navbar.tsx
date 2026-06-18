@@ -11,6 +11,7 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await signOut();
+      useAuthStore.getState().setUser(null);
     } catch (err) {
       console.error(err);
     }

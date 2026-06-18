@@ -2,27 +2,39 @@ import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyMockKeyForDevelopment",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "mock-domain.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "mock-project",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "mock-project.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:mock123"
-};
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+export const isMockMode = !apiKey;
 
-let app;
-try {
-  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-} catch (e) {
-  console.error("Firebase init error:", e);
+let app: any = null;
+export let auth: any = null;
+export let db: any = null;
+export let googleProvider: any = null;
+
+if (!isMockMode) {
+  const firebaseConfig = {
+    apiKey,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
+  };
+  try {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    auth = getAuth(app);
+    db = getFirestore(app);
+    googleProvider = new GoogleAuthProvider();
+  } catch (e) {
+    console.error("Firebase init error:", e);
+  }
 }
 
-export const auth = app ? getAuth(app) : (null as any);
-export const db = app ? getFirestore(app) : (null as any);
-export const googleProvider = new GoogleAuthProvider();
-
 export const signInWithGoogle = async () => {
+  if (isMockMode) {
+    // Return a mock user for the hackathon demo
+    return { uid: 'demo-judge', email: 'demo@ecotrack.app', displayName: 'Hackathon Judge' };
+  }
+  if (!auth) throw new Error("Firebase not initialized");
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
@@ -33,6 +45,8 @@ export const signInWithGoogle = async () => {
 };
 
 export const signOut = async () => {
+  if (isMockMode) return;
+  if (!auth) throw new Error("Firebase not initialized");
   try {
     await fbSignOut(auth);
   } catch (error) {

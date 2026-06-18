@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { auth, isMockMode } from '../lib/firebase';
 
 interface AuthState {
   user: User | null;
@@ -18,11 +18,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 }));
 
 // Initialize Firebase Auth listener safely
-if (auth) {
+if (isMockMode) {
+  // Graceful fallback for mock mode / missing config
+  setTimeout(() => {
+    useAuthStore.getState().setUser(null);
+  }, 100);
+} else if (auth) {
   onAuthStateChanged(auth, (user) => {
     useAuthStore.getState().setUser(user);
   });
 } else {
-  // Graceful fallback for mock mode / missing config
   useAuthStore.setState({ isLoading: false });
 }

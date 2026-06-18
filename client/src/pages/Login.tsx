@@ -17,7 +17,9 @@ export default function Login() {
     setIsLoggingIn(true);
     setError(null);
     try {
-      await signInWithGoogle();
+      const user = await signInWithGoogle();
+      // In mock mode, the Firebase auth listener isn't running, so we manually update state
+      useAuthStore.getState().setUser(user as any);
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Failed to authenticate with Google.');
