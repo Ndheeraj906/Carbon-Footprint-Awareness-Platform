@@ -6,12 +6,13 @@ const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 export const isMockMode = !apiKey;
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export let auth: any = null;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export let db: any = null;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export let googleProvider: any = null;
+import type { Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
+import type { GoogleAuthProvider as GoogleAuthProviderType } from 'firebase/auth';
+
+export let auth: Auth | null = null;
+export let db: Firestore | null = null;
+export let googleProvider: GoogleAuthProviderType | null = null;
 
 if (!isMockMode) {
   const firebaseConfig = {
@@ -37,7 +38,7 @@ export const signInWithGoogle = async () => {
     // Return a mock user for the hackathon demo
     return { uid: 'demo-judge', email: 'demo@ecotrack.app', displayName: 'Hackathon Judge' };
   }
-  if (!auth) throw new Error("Firebase not initialized");
+  if (!auth || !googleProvider) throw new Error("Firebase not initialized");
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;

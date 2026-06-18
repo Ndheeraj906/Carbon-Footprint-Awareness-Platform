@@ -67,9 +67,11 @@ const verifyToken = async (req, res, next) => {
     if (admin.apps.length > 0) {
       const decodedToken = await admin.auth().verifyIdToken(token);
       req.user = decodedToken;
-    } else {
+    } else if (process.env.NODE_ENV !== 'production') {
       // Mock validation for development if Firebase is missing
       req.user = { uid: 'mock-user-id', email: 'demo@ecotrack.app' };
+    } else {
+      return res.status(401).json({ error: 'Unauthorized: Firebase not configured in production' });
     }
     next();
   } catch (error) {
