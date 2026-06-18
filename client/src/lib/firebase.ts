@@ -6,9 +6,12 @@ const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 export const isMockMode = !apiKey;
 
 
-export let auth: unknown = null;
-export let db: unknown = null;
-export let googleProvider: unknown = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export let auth: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export let db: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export let googleProvider: any = null;
 
 if (!isMockMode) {
   const firebaseConfig = {

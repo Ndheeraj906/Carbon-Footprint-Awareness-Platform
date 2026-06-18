@@ -6,7 +6,7 @@ WORKDIR /app
 # We only need the client directory to build
 COPY client/package*.json ./client/
 WORKDIR /app/client
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 COPY client/ ./
 RUN npm run build
 
