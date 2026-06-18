@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
 interface AuthState {
@@ -16,7 +17,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
 }));
 
-// Initialize Firebase Auth listener
-onAuthStateChanged(auth, (user) => {
-  useAuthStore.getState().setUser(user);
-});
+// Initialize Firebase Auth listener safely
+if (auth) {
+  onAuthStateChanged(auth, (user) => {
+    useAuthStore.getState().setUser(user);
+  });
+} else {
+  // Graceful fallback for mock mode / missing config
+  useAuthStore.setState({ isLoading: false });
+}
