@@ -82,7 +82,7 @@ export default function Challenges() {
                   <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
                     <div 
                       className={`h-2 rounded-full transition-all duration-1000 ${goal.completed ? 'bg-primary' : 'bg-slate-400'}`} 
-                      style={{ width: \`\${Math.min(100, (goal.progress / goal.target) * 100)}%\` }}
+                      style={{ width: `${Math.min(100, (goal.progress / goal.target) * 100)}%` }}
                     ></div>
                   </div>
                 </div>
