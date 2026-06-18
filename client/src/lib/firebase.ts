@@ -5,7 +5,7 @@ import { getFirestore } from "firebase/firestore";
 const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 export const isMockMode = !apiKey;
 
-let app: any = null;
+
 export let auth: any = null;
 export let db: any = null;
 export let googleProvider: any = null;
@@ -20,7 +20,7 @@ if (!isMockMode) {
     appId: import.meta.env.VITE_FIREBASE_APP_ID
   };
   try {
-    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     db = getFirestore(app);
     googleProvider = new GoogleAuthProvider();

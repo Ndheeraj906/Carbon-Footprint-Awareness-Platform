@@ -3,6 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
 const admin = require('firebase-admin');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
@@ -12,6 +14,16 @@ const PORT = process.env.PORT || 8080;
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(compression()); // Gzip compression for performance efficiency
+
+// Rate Limiter to prevent DDoS/Brute-force (Security)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // Limit each IP to 200 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 // Initialize Firebase Admin (Only if credentials exist)
 // In production, these should be securely injected

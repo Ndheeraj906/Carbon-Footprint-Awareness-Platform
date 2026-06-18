@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Car, Zap, Utensils, Send } from 'lucide-react';
 
 export default function Calculator() {
@@ -28,8 +28,8 @@ export default function Calculator() {
 
       <form onSubmit={handleSubmit} className="glass-panel p-6 md:p-8 space-y-6">
         
-        <div className="space-y-4">
-          <label className="block text-sm font-medium text-slate-300">Category</label>
+        <div className="space-y-4" role="group" aria-labelledby="category-label">
+          <span id="category-label" className="block text-sm font-medium text-slate-300">Category</span>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               type="button"

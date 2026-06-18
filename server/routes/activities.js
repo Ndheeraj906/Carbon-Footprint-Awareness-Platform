@@ -40,33 +40,41 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/activities
+const { z } = require('zod');
+
+const activitySchema = z.object({
+  type: z.enum(['transport', 'energy', 'diet']),
+  amount: z.number().positive(),
+});
+
 router.post('/', async (req, res) => {
-  const { type, amount } = req.body;
-  if (!type || !amount) {
-    return res.status(400).json({ error: 'Invalid input' });
-  }
-
-  // Calculate CO2 (Mock logic - in reality, use proper emission factors)
-  const emissionFactors = { transport: 0.27, energy: 0.45, diet: 3.2 };
-  const co2 = amount * (emissionFactors[type] || 0);
-
-  const newActivity = {
-    userId: req.user ? req.user.uid : 'mock-user',
-    type,
-    amount: Number(amount),
-    co2,
-    date: new Date().toISOString()
-  };
-
-  const db = getDb();
-  if (!db) {
-    return res.status(201).json({ activity: { id: 'mock-id', ...newActivity } });
-  }
-
   try {
+    const validatedData = activitySchema.parse(req.body);
+    const { type, amount } = validatedData;
+
+    // Calculate CO2 strictly
+    const emissionFactors = { transport: 0.27, energy: 0.45, diet: 3.2 };
+    const co2 = Number((amount * (emissionFactors[type] || 0)).toFixed(2));
+
+    const newActivity = {
+      userId: req.user ? req.user.uid : 'mock-user',
+      type,
+      amount,
+      co2,
+      date: new Date().toISOString()
+    };
+
+    const db = getDb();
+    if (!db) {
+      return res.status(201).json({ activity: { id: 'mock-id', ...newActivity } });
+    }
+
     const docRef = await db.collection('activities').add(newActivity);
     res.status(201).json({ activity: { id: docRef.id, ...newActivity } });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+    }
     res.status(500).json({ error: 'Failed to save activity' });
   }
 });
