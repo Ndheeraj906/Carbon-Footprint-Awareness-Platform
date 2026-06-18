@@ -6,13 +6,13 @@ import '@testing-library/jest-dom';
 describe('Dashboard Component', () => {
   it('renders the Dashboard header perfectly', () => {
     render(<Dashboard />);
-    expect(screen.getByText(/Dashboard Overview/i)).toBeInTheDocument();
+    expect(screen.getByText(/Welcome back/i)).toBeInTheDocument();
   });
 
   it('renders the EcoScore widget', () => {
     render(<Dashboard />);
     expect(screen.getByText(/Sustainability/i)).toBeInTheDocument();
-    expect(screen.getByText(/EcoScore/i)).toBeInTheDocument();
+    expect(screen.getByText(/Eco Score/i)).toBeInTheDocument();
   });
 
   it('displays the AI Recommendations section properly', () => {

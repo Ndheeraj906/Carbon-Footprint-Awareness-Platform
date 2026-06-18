@@ -4,6 +4,8 @@ import { signInWithGoogle } from '../lib/firebase';
 import { Leaf } from 'lucide-react';
 import { useState } from 'react';
 
+import type { User } from 'firebase/auth';
+
 export default function Login() {
   const { isAuthenticated } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
@@ -18,8 +20,7 @@ export default function Login() {
     setError(null);
     try {
       const user = await signInWithGoogle();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      useAuthStore.getState().setUser(user as any);
+      useAuthStore.getState().setUser(user as User);
     } catch (err: unknown) {
       console.error(err);
       if (err instanceof Error) {
